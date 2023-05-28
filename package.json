@@ -1,0 +1,45 @@
+{
+  "name": "@susisu/hokemi",
+  "version": "0.0.0",
+  "description": "",
+  "repository": "https://github.com/susisu/hokemi.git",
+  "author": "Susisu <susisu2413@yahoo.co.jp>",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "files": [
+    "lib",
+    "src",
+    "!src/**/*.{test,spec}.{ts,tsx}",
+    "!src/**/__tests__"
+  ],
+  "scripts": {
+    "lint": "run-s lint:eslint lint:prettier",
+    "lint-fix": "run-s lint-fix:eslint lint-fix:prettier",
+    "lint:eslint": "eslint '*.js' src",
+    "lint-fix:eslint": "eslint --fix '*.js' src",
+    "lint:prettier": "prettier --check '*.js' src",
+    "lint-fix:prettier": "prettier --write '*.js' src",
+    "test": "jest",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "build": "tsc --build tsconfig.build.json",
+    "clean": "run-s clean:build clean:rm",
+    "clean:build": "tsc --build tsconfig.build.json --clean",
+    "clean:rm": "rimraf lib",
+    "prepublishOnly": "run-s clean lint test build"
+  },
+  "packageManager": "yarn@3.5.1",
+  "devDependencies": {
+    "@susisu/eslint-config": "^0.0.63",
+    "@types/jest": "^29.5.1",
+    "eslint": "^8.41.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-jest": "^27.2.1",
+    "eslint-plugin-jest-formatting": "^3.1.0",
+    "jest": "^29.5.0",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.8.8",
+    "rimraf": "^5.0.1",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.0.4"
+  }
+}
