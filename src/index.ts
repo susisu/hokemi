@@ -106,7 +106,7 @@ type DependencyError<
   ? never
   : {
       [dependencyError]: {
-        reason: `missing dependencies`;
+        reason: "missing dependencies";
         requiredBy: F["name"];
         dependencyNames: MissingDependencyNames<Dependencies<F>, MixedInstance<Fs>>;
       };
