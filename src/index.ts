@@ -77,7 +77,7 @@ export type Mixer<Fs extends AbstractFactory[]> = Readonly<{
 }>;
 
 type MixFunction<Fs extends AbstractFactory[]> = <Gs extends AbstractFactory[]>(
-  ...args: Gs
+  ...factories: Gs
 ) => Mixer<[...Fs, ...Gs]>;
 
 type MakeFunction<Fs extends AbstractFactory[]> = MakeError<Fs> extends never
