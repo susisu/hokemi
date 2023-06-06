@@ -46,19 +46,19 @@ type Factory<N extends string, T extends unknown, D extends unknown> = Readonly<
 
 type AbstractFactory = Factory<string, unknown, never>;
 
-export type Impl<C extends AbstractComponent, Ds extends AbstractComponent[]> = C extends Component<
-  infer N,
-  infer T
->
-  ? Factory<N, T, ComposedInstance<Ds>>
-  : never;
+export type Impl<
+  C extends AbstractComponent,
+  Ds extends AbstractComponent[] = []
+> = C extends Component<infer N, infer T> ? Factory<N, T, ComposedInstance<Ds>> : never;
 
-type ImplArgs<C extends AbstractComponent, Ds extends AbstractComponent[]> = _ImplArgs<Impl<C, Ds>>;
+type ImplArgs<C extends AbstractComponent, Ds extends AbstractComponent[] = []> = _ImplArgs<
+  Impl<C, Ds>
+>;
 type _ImplArgs<F extends AbstractFactory> = F extends Factory<infer N, infer T, infer D>
   ? [name: N, func: (deps: D) => T]
   : never;
 
-export function impl<C extends AbstractComponent, Ds extends AbstractComponent[]>(
+export function impl<C extends AbstractComponent, Ds extends AbstractComponent[] = []>(
   ...[name, func]: ImplArgs<C, Ds>
 ): Impl<C, Ds> {
   const factory: AbstractFactory = {

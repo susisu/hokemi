@@ -27,7 +27,7 @@ describe("mixer", () => {
   const bar = impl<BarComponent, [BazComponent]>("bar", deps => ({
     getBar: () => (deps.baz.getBaz() ? "Hello" : "Bye"),
   }));
-  const baz = impl<BazComponent, []>("baz", () => ({
+  const baz = impl<BazComponent>("baz", () => ({
     getBaz: () => true,
   }));
 
