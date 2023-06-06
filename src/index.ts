@@ -1,4 +1,4 @@
-const componentKind = Symbol("hokemi.Component");
+const componentKind = Symbol("hokemi.kind.Component");
 
 export type Component<N extends string, T extends unknown> = {
   kind: typeof componentKind;
@@ -36,7 +36,7 @@ type ComposedInstance<Cs extends AbstractComponent[]> = Cs extends unknown
     : never
   : never;
 
-const factoryType = Symbol("hokemi.Factory");
+const factoryType = Symbol("hokemi.type.Factory");
 
 type Factory<N extends string, T extends unknown, D extends unknown> = Readonly<{
   type: typeof factoryType;
