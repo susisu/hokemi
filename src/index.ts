@@ -12,9 +12,9 @@ type Instance<C extends AbstractComponent> = C extends Component<infer N, infer 
   ? _Instance<N, T>
   : never;
 type _Instance<N extends string, T extends unknown> = IsFiniteString<N> extends true
-  ? N extends unknown
+  ? IsSingleton<N> extends true
     ? { readonly [N0 in N]: T }
-    : never
+    : {}
   : {};
 // prettier-ignore
 type IsFiniteString<S extends string> =
@@ -27,6 +27,8 @@ type IsFiniteString<S extends string> =
     : IsFiniteString<R>
   )
   : never;
+type IsSingleton<T> = _IsSingleton<T, T>;
+type _IsSingleton<T, U> = T extends unknown ? ([U] extends [T] ? true : false) : false;
 
 type ComposedInstance<Cs extends AbstractComponent[]> = Cs extends unknown
   ? {
