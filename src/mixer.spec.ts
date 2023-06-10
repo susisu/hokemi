@@ -1,26 +1,12 @@
-import type { Component } from ".";
-import { impl, mixer } from ".";
-
-type FooComponent = Component<"foo", { getFoo: () => number }>;
-type BarComponent = Component<"bar", { getBar: () => string }>;
-type BazComponent = Component<"baz", { getBaz: () => boolean }>;
-
-describe("impl", () => {
-  it("creates a provider that implements a component", () => {
-    const foo = impl<FooComponent, [BarComponent]>("foo", app => ({
-      getFoo: () => app.bar.getBar().length,
-    }));
-    expect(foo.name).toBe("foo");
-    const instance = foo.factory({
-      bar: {
-        getBar: () => "Hello",
-      },
-    });
-    expect(instance.getFoo()).toBe(5);
-  });
-});
+import type { Component } from "./component";
+import { mixer } from "./mixer";
+import { impl } from "./provider";
 
 describe("mixer", () => {
+  type FooComponent = Component<"foo", { getFoo: () => number }>;
+  type BarComponent = Component<"bar", { getBar: () => string }>;
+  type BazComponent = Component<"baz", { getBaz: () => boolean }>;
+
   const foo = impl<FooComponent, [BarComponent, BazComponent]>("foo", deps => ({
     getFoo: () => (deps.baz.getBaz() ? deps.bar.getBar().length : 42),
   }));
