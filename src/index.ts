@@ -1,7 +1,8 @@
-const componentKind = Symbol("hokemi.kind.Component");
+const componentType = Symbol("hokemi.type.Component");
 
 export type Component<N extends string, T extends unknown> = {
-  kind: typeof componentKind;
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  __type: typeof componentType;
   name: N;
   type: T;
 };
@@ -41,7 +42,8 @@ type ComposedInstance<Cs extends AbstractComponent[]> = Cs extends unknown
 const providerType = Symbol("hokemi.type.Provider");
 
 type Provider<N extends string, T extends unknown, D extends unknown> = Readonly<{
-  type: typeof providerType;
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  __type: typeof providerType;
   name: N;
   factory: (deps: D) => T;
 }>;
@@ -64,7 +66,8 @@ export function impl<C extends AbstractComponent, Ds extends AbstractComponent[]
   ...[name, factory]: ImplArgs<C, Ds>
 ): Impl<C, Ds> {
   const provider: AbstractProvider = {
-    type: providerType,
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    __type: providerType,
     name,
     factory,
   };
