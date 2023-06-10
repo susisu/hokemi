@@ -13,6 +13,10 @@ export type IsFiniteString<S extends string> =
 export type IsSingleton<T> = _IsSingleton<T, T>;
 type _IsSingleton<T, U> = T extends unknown ? ([U] extends [T] ? true : false) : false;
 
+export type Extend<A, B> = B extends unknown
+  ? { [K in keyof A as K extends keyof B ? never : K]: A[K] } & B
+  : never;
+
 export type OrElse<T, E> = [T] extends [never] ? E : T;
 
 export type Wrap<T> = [T] extends [never] ? never : [T];

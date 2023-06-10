@@ -1,4 +1,4 @@
-import type { IsFiniteString, IsSingleton } from "./utils";
+import type { Extend, IsFiniteString, IsSingleton } from "./utils";
 
 const componentType = Symbol("hokemi.type.Component");
 
@@ -20,10 +20,12 @@ type _Instance<N extends string, T extends unknown> = IsFiniteString<N> extends 
     : {}
   : {};
 
-export type MixedInstance<Cs extends AbstractComponent[]> = Cs extends unknown
-  ? {
-      [K in keyof Cs]: (x: Instance<Cs[K]>) => unknown;
-    }[number] extends (x: infer A) => unknown
-    ? A
-    : never
+export type MixedInstance<Cs extends AbstractComponent[]> = _MixedInstance<Cs, {}>;
+// prettier-ignore
+type _MixedInstance<Cs extends AbstractComponent[], I extends unknown> =
+    Cs extends [] ? I
+  : Cs extends [
+      infer X extends AbstractComponent,
+      ...infer Xs extends AbstractComponent[]
+    ] ? _MixedInstance<Xs, Extend<I, Instance<X>>>
   : never;
