@@ -7,9 +7,9 @@ export type Component<N extends string, T extends unknown> = {
   type: T;
 };
 
-type AbstractComponent = Component<string, unknown>;
+export type AbstractComponent = Component<string, unknown>;
 
-type Instance<C extends AbstractComponent> = C extends Component<infer N, infer T>
+export type Instance<C extends AbstractComponent> = C extends Component<infer N, infer T>
   ? _Instance<N, T>
   : never;
 type _Instance<N extends string, T extends unknown> = IsFiniteString<N> extends true
@@ -31,7 +31,7 @@ type IsFiniteString<S extends string> =
 type IsSingleton<T> = _IsSingleton<T, T>;
 type _IsSingleton<T, U> = T extends unknown ? ([U] extends [T] ? true : false) : false;
 
-type MixedInstance<Cs extends AbstractComponent[]> = Cs extends unknown
+export type MixedInstance<Cs extends AbstractComponent[]> = Cs extends unknown
   ? {
       [K in keyof Cs]: (x: Instance<Cs[K]>) => unknown;
     }[number] extends (x: infer A) => unknown
@@ -41,14 +41,21 @@ type MixedInstance<Cs extends AbstractComponent[]> = Cs extends unknown
 
 const providerType = Symbol("hokemi.type.Provider");
 
-type Provider<N extends string, T extends unknown, D extends unknown> = Readonly<{
+export type Provider<N extends string, T extends unknown, D extends unknown> = Readonly<{
   // eslint-disable-next-line @typescript-eslint/naming-convention
   __type: typeof providerType;
   name: N;
   factory: (deps: D) => T;
 }>;
 
-type AbstractProvider = Provider<string, unknown, never>;
+export type AbstractProvider = Provider<string, unknown, never>;
+
+export type MixedProvidedInstance<Ps extends AbstractProvider[]> = MixedInstance<{
+  [K in keyof Ps]: ReconstructComponent<Ps[K]>;
+}>;
+type ReconstructComponent<P extends AbstractProvider> = P extends Provider<infer N, infer T, never>
+  ? Component<N, T>
+  : never;
 
 export type Impl<
   C extends AbstractComponent,
@@ -88,13 +95,6 @@ type MixerMix<Ps extends AbstractProvider[]> = <Gs extends AbstractProvider[]>(
 type MixerMake<Ps extends AbstractProvider[]> = MixerError<Ps> extends never
   ? () => MixedProvidedInstance<Ps>
   : MixerError<Ps>;
-
-type MixedProvidedInstance<Ps extends AbstractProvider[]> = MixedInstance<{
-  [K in keyof Ps]: ReconstructComponent<Ps[K]>;
-}>;
-type ReconstructComponent<P extends AbstractProvider> = P extends Provider<infer N, infer T, never>
-  ? Component<N, T>
-  : never;
 
 type MixerError<Ps extends AbstractProvider[]> = {
   [K in keyof Ps]: PerProviderError<Ps[K], Ps>;
