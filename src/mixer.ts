@@ -106,17 +106,17 @@ export function mixer<Ps extends AbstractProvider[]>(...providers: Ps): Mixer<Ps
   // eslint-disable-next-line @susisu/safe-typescript/no-type-assertion
   const make: MixerMake<Ps> = (() => {
     const app = {};
-    const components: Array<Readonly<{ name: string; value: unknown }>> = [];
+    const instancex: Array<Readonly<{ name: string; value: unknown }>> = [];
     for (const provider of providers) {
-      components.push({
+      instancex.push({
         name: provider.name,
         // eslint-disable-next-line @susisu/safe-typescript/no-type-assertion
         value: provider.factory(app as never),
       });
     }
-    for (const component of components) {
-      Object.defineProperty(app, component.name, {
-        value: component.value,
+    for (const instance of instancex) {
+      Object.defineProperty(app, instance.name, {
+        value: instance.value,
         configurable: true,
         enumerable: true,
         writable: true,
