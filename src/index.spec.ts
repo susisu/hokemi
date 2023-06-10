@@ -6,12 +6,12 @@ type BarComponent = Component<"bar", { getBar: () => string }>;
 type BazComponent = Component<"baz", { getBaz: () => boolean }>;
 
 describe("impl", () => {
-  it("creates a factory object that implements a component", () => {
+  it("creates a provider that implements a component", () => {
     const foo = impl<FooComponent, [BarComponent]>("foo", app => ({
       getFoo: () => app.bar.getBar().length,
     }));
     expect(foo.name).toBe("foo");
-    const instance = foo.func({
+    const instance = foo.factory({
       bar: {
         getBar: () => "Hello",
       },

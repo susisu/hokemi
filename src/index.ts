@@ -38,98 +38,98 @@ type ComposedInstance<Cs extends AbstractComponent[]> = Cs extends unknown
     : never
   : never;
 
-const factoryType = Symbol("hokemi.type.Factory");
+const providerType = Symbol("hokemi.type.Provider");
 
-type Factory<N extends string, T extends unknown, D extends unknown> = Readonly<{
-  type: typeof factoryType;
+type Provider<N extends string, T extends unknown, D extends unknown> = Readonly<{
+  type: typeof providerType;
   name: N;
-  func: (deps: D) => T;
+  factory: (deps: D) => T;
 }>;
 
-type AbstractFactory = Factory<string, unknown, never>;
+type AbstractProvider = Provider<string, unknown, never>;
 
 export type Impl<
   C extends AbstractComponent,
   Ds extends AbstractComponent[] = []
-> = C extends Component<infer N, infer T> ? Factory<N, T, ComposedInstance<Ds>> : never;
+> = C extends Component<infer N, infer T> ? Provider<N, T, ComposedInstance<Ds>> : never;
 
 type ImplArgs<C extends AbstractComponent, Ds extends AbstractComponent[] = []> = _ImplArgs<
   Impl<C, Ds>
 >;
-type _ImplArgs<F extends AbstractFactory> = F extends Factory<infer N, infer T, infer D>
-  ? [name: N, func: (deps: D) => T]
+type _ImplArgs<P extends AbstractProvider> = P extends Provider<infer N, infer T, infer D>
+  ? [name: N, factory: (deps: D) => T]
   : never;
 
 export function impl<C extends AbstractComponent, Ds extends AbstractComponent[] = []>(
-  ...[name, func]: ImplArgs<C, Ds>
+  ...[name, factory]: ImplArgs<C, Ds>
 ): Impl<C, Ds> {
-  const factory: AbstractFactory = {
-    type: factoryType,
+  const provider: AbstractProvider = {
+    type: providerType,
     name,
-    func,
+    factory,
   };
   // ImplArgs<C, Ds> and Impl<C, Ds> always have the same shape, so it's safe to cast.
   // eslint-disable-next-line @susisu/safe-typescript/no-type-assertion
-  return factory as Impl<C, Ds>;
+  return provider as Impl<C, Ds>;
 }
 
-export type Mixer<Fs extends AbstractFactory[]> = Readonly<{
-  mix: MixFunction<Fs>;
-  make: MakeFunction<Fs>;
+export type Mixer<Ps extends AbstractProvider[]> = Readonly<{
+  mix: MixFunction<Ps>;
+  make: MakeFunction<Ps>;
 }>;
 
-type MixFunction<Fs extends AbstractFactory[]> = <Gs extends AbstractFactory[]>(
+type MixFunction<Ps extends AbstractProvider[]> = <Gs extends AbstractProvider[]>(
   ...factories: Gs
-) => Mixer<[...Fs, ...Gs]>;
+) => Mixer<[...Ps, ...Gs]>;
 
-type MakeFunction<Fs extends AbstractFactory[]> = MakeError<Fs> extends never
-  ? () => MixedInstance<Fs>
-  : MakeError<Fs>;
+type MakeFunction<Ps extends AbstractProvider[]> = MakeError<Ps> extends never
+  ? () => MixedInstance<Ps>
+  : MakeError<Ps>;
 
-type MixedInstance<Fs extends AbstractFactory[]> = ComposedInstance<{
-  [K in keyof Fs]: ReconstructComponent<Fs[K]>;
+type MixedInstance<Ps extends AbstractProvider[]> = ComposedInstance<{
+  [K in keyof Ps]: ReconstructComponent<Ps[K]>;
 }>;
-type ReconstructComponent<F extends AbstractFactory> = F extends Factory<infer N, infer T, never>
+type ReconstructComponent<P extends AbstractProvider> = P extends Provider<infer N, infer T, never>
   ? Component<N, T>
   : never;
 
-type MakeError<Fs extends AbstractFactory[]> = {
-  [K in keyof Fs]: DependencyError<Fs[K], Fs>;
+type MakeError<Ps extends AbstractProvider[]> = {
+  [K in keyof Ps]: DependencyError<Ps[K], Ps>;
 }[number];
 
 const dependencyError = Symbol("hokemi.error.dependencyError");
 
 type DependencyError<
-  F extends AbstractFactory,
-  Fs extends AbstractFactory[]
-> = MixedInstance<Fs> extends Dependencies<F>
+  P extends AbstractProvider,
+  Ps extends AbstractProvider[]
+> = MixedInstance<Ps> extends Dependencies<P>
   ? never
   : {
       [dependencyError]: {
         reason: "missing dependencies";
-        requiredBy: F["name"];
-        dependencyNames: MissingDependencyNames<Dependencies<F>, MixedInstance<Fs>>;
+        requiredBy: P["name"];
+        dependencyNames: MissingDependencyNames<Dependencies<P>, MixedInstance<Ps>>;
       };
     };
-type Dependencies<F extends AbstractFactory> = F extends Factory<string, unknown, infer D>
+type Dependencies<P extends AbstractProvider> = P extends Provider<string, unknown, infer D>
   ? D
   : never;
 type MissingDependencyNames<D extends unknown, T extends unknown> = D extends unknown
   ? [Exclude<keyof D, keyof T>]
   : never;
 
-export function mixer<Fs extends AbstractFactory[]>(...factories: Fs): Mixer<Fs> {
-  const mix: MixFunction<Fs> = (...args) => mixer(...factories, ...args);
+export function mixer<Ps extends AbstractProvider[]>(...providers: Ps): Mixer<Ps> {
+  const mix: MixFunction<Ps> = (...args) => mixer(...providers, ...args);
 
   // eslint-disable-next-line @susisu/safe-typescript/no-type-assertion
-  const make: MakeFunction<Fs> = (() => {
+  const make: MakeFunction<Ps> = (() => {
     const app = {};
     const components: Array<Readonly<{ name: string; value: unknown }>> = [];
-    for (const factory of factories) {
+    for (const provider of providers) {
       components.push({
-        name: factory.name,
+        name: provider.name,
         // eslint-disable-next-line @susisu/safe-typescript/no-type-assertion
-        value: factory.func(app as never),
+        value: provider.factory(app as never),
       });
     }
     for (const component of components) {
@@ -141,7 +141,7 @@ export function mixer<Fs extends AbstractFactory[]>(...factories: Fs): Mixer<Fs>
       });
     }
     return app;
-  }) as MakeFunction<Fs>;
+  }) as MakeFunction<Ps>;
 
   return { mix, make };
 }
