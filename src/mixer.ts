@@ -6,9 +6,9 @@ export type Mixer<Ps extends AbstractProvider[]> = Readonly<{
   make: MixerMake<Ps>;
 }>;
 
-type MixerMix<Ps extends AbstractProvider[]> = <Gs extends AbstractProvider[]>(
-  ...factories: Gs
-) => Mixer<[...Ps, ...Gs]>;
+type MixerMix<Ps extends AbstractProvider[]> = <Qs extends AbstractProvider[]>(
+  ...providers: Qs
+) => Mixer<[...Ps, ...Qs]>;
 
 type MixerMake<Ps extends AbstractProvider[]> = MixerError<Ps> extends never
   ? () => MixedProvidedInstance<Ps>
@@ -82,7 +82,7 @@ type _IncompatibleDependencyNames<D extends unknown, I extends unknown> = D exte
   : never;
 
 export function mixer<Ps extends AbstractProvider[]>(...providers: Ps): Mixer<Ps> {
-  const mix: MixerMix<Ps> = (...args) => mixer(...providers, ...args);
+  const mix: MixerMix<Ps> = (...otherProviders) => mixer(...providers, ...otherProviders);
 
   // eslint-disable-next-line @susisu/safe-typescript/no-type-assertion
   const make: MixerMake<Ps> = (() => {
