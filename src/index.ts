@@ -77,17 +77,17 @@ export function impl<C extends AbstractComponent, Ds extends AbstractComponent[]
 }
 
 export type Mixer<Ps extends AbstractProvider[]> = Readonly<{
-  mix: MixFunction<Ps>;
-  make: MakeFunction<Ps>;
+  mix: MixerMix<Ps>;
+  make: MixerMake<Ps>;
 }>;
 
-type MixFunction<Ps extends AbstractProvider[]> = <Gs extends AbstractProvider[]>(
+type MixerMix<Ps extends AbstractProvider[]> = <Gs extends AbstractProvider[]>(
   ...factories: Gs
 ) => Mixer<[...Ps, ...Gs]>;
 
-type MakeFunction<Ps extends AbstractProvider[]> = MakeError<Ps> extends never
+type MixerMake<Ps extends AbstractProvider[]> = MixerError<Ps> extends never
   ? () => MixedProvidedInstance<Ps>
-  : MakeError<Ps>;
+  : MixerError<Ps>;
 
 type MixedProvidedInstance<Ps extends AbstractProvider[]> = MixedInstance<{
   [K in keyof Ps]: ReconstructComponent<Ps[K]>;
@@ -96,13 +96,13 @@ type ReconstructComponent<P extends AbstractProvider> = P extends Provider<infer
   ? Component<N, T>
   : never;
 
-type MakeError<Ps extends AbstractProvider[]> = {
-  [K in keyof Ps]: DependencyError<Ps[K], Ps>;
+type MixerError<Ps extends AbstractProvider[]> = {
+  [K in keyof Ps]: PerProviderError<Ps[K], Ps>;
 }[number];
 
 const dependencyError = Symbol("hokemi.error.dependencyError");
 
-type DependencyError<
+type PerProviderError<
   P extends AbstractProvider,
   Ps extends AbstractProvider[]
 > = MixedProvidedInstance<Ps> extends Dependencies<P>
@@ -122,10 +122,10 @@ type MissingDependencyNames<D extends unknown, T extends unknown> = D extends un
   : never;
 
 export function mixer<Ps extends AbstractProvider[]>(...providers: Ps): Mixer<Ps> {
-  const mix: MixFunction<Ps> = (...args) => mixer(...providers, ...args);
+  const mix: MixerMix<Ps> = (...args) => mixer(...providers, ...args);
 
   // eslint-disable-next-line @susisu/safe-typescript/no-type-assertion
-  const make: MakeFunction<Ps> = (() => {
+  const make: MixerMake<Ps> = (() => {
     const app = {};
     const components: Array<Readonly<{ name: string; value: unknown }>> = [];
     for (const provider of providers) {
@@ -144,7 +144,7 @@ export function mixer<Ps extends AbstractProvider[]>(...providers: Ps): Mixer<Ps
       });
     }
     return app;
-  }) as MakeFunction<Ps>;
+  }) as MixerMake<Ps>;
 
   return { mix, make };
 }
