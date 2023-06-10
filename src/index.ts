@@ -31,7 +31,7 @@ type IsFiniteString<S extends string> =
 type IsSingleton<T> = _IsSingleton<T, T>;
 type _IsSingleton<T, U> = T extends unknown ? ([U] extends [T] ? true : false) : false;
 
-type ComposedInstance<Cs extends AbstractComponent[]> = Cs extends unknown
+type MixedInstance<Cs extends AbstractComponent[]> = Cs extends unknown
   ? {
       [K in keyof Cs]: (x: Instance<Cs[K]>) => unknown;
     }[number] extends (x: infer A) => unknown
@@ -53,7 +53,7 @@ type AbstractProvider = Provider<string, unknown, never>;
 export type Impl<
   C extends AbstractComponent,
   Ds extends AbstractComponent[] = []
-> = C extends Component<infer N, infer T> ? Provider<N, T, ComposedInstance<Ds>> : never;
+> = C extends Component<infer N, infer T> ? Provider<N, T, MixedInstance<Ds>> : never;
 
 type ImplArgs<C extends AbstractComponent, Ds extends AbstractComponent[] = []> = _ImplArgs<
   Impl<C, Ds>
@@ -86,10 +86,10 @@ type MixFunction<Ps extends AbstractProvider[]> = <Gs extends AbstractProvider[]
 ) => Mixer<[...Ps, ...Gs]>;
 
 type MakeFunction<Ps extends AbstractProvider[]> = MakeError<Ps> extends never
-  ? () => MixedInstance<Ps>
+  ? () => MixedProvidedInstance<Ps>
   : MakeError<Ps>;
 
-type MixedInstance<Ps extends AbstractProvider[]> = ComposedInstance<{
+type MixedProvidedInstance<Ps extends AbstractProvider[]> = MixedInstance<{
   [K in keyof Ps]: ReconstructComponent<Ps[K]>;
 }>;
 type ReconstructComponent<P extends AbstractProvider> = P extends Provider<infer N, infer T, never>
@@ -105,13 +105,13 @@ const dependencyError = Symbol("hokemi.error.dependencyError");
 type DependencyError<
   P extends AbstractProvider,
   Ps extends AbstractProvider[]
-> = MixedInstance<Ps> extends Dependencies<P>
+> = MixedProvidedInstance<Ps> extends Dependencies<P>
   ? never
   : {
       [dependencyError]: {
         reason: "missing dependencies";
         requiredBy: P["name"];
-        dependencyNames: MissingDependencyNames<Dependencies<P>, MixedInstance<Ps>>;
+        dependencyNames: MissingDependencyNames<Dependencies<P>, MixedProvidedInstance<Ps>>;
       };
     };
 type Dependencies<P extends AbstractProvider> = P extends Provider<string, unknown, infer D>
