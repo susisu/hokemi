@@ -100,18 +100,23 @@ type MixerError<Ps extends AbstractProvider[]> = {
   [K in keyof Ps]: PerProviderError<Ps[K], Ps>;
 }[number];
 
-const dependencyError = Symbol("hokemi.error.dependencyError");
-
 type PerProviderError<
   P extends AbstractProvider,
   Ps extends AbstractProvider[]
-> = MixedProvidedInstance<Ps> extends Dependencies<P>
+> = MissingDependenciesError<P, MixedProvidedInstance<Ps>>;
+
+const missingDependenciesError = Symbol("hokemi.error.MissingDependencies");
+
+type MissingDependenciesError<
+  P extends AbstractProvider,
+  I extends unknown
+> = I extends Dependencies<P>
   ? never
   : {
-      [dependencyError]: {
-        reason: "missing dependencies";
+      [missingDependenciesError]: {
+        reason: "some required dependencies are not provided";
         requiredBy: P["name"];
-        dependencyNames: MissingDependencyNames<Dependencies<P>, MixedProvidedInstance<Ps>>;
+        dependencyNames: MissingDependencyNames<Dependencies<P>, I>;
       };
     };
 type Dependencies<P extends AbstractProvider> = P extends Provider<string, unknown, infer D>
