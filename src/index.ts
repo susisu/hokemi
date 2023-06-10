@@ -57,6 +57,10 @@ type ReconstructComponent<P extends AbstractProvider> = P extends Provider<infer
   ? Component<N, T>
   : never;
 
+type Dependencies<P extends AbstractProvider> = P extends Provider<string, unknown, infer D>
+  ? D
+  : never;
+
 export type Impl<
   C extends AbstractComponent,
   Ds extends AbstractComponent[] = []
@@ -100,31 +104,68 @@ type MixerError<Ps extends AbstractProvider[]> = {
   [K in keyof Ps]: PerProviderError<Ps[K], Ps>;
 }[number];
 
+const unknownError = Symbol("hokemi.error.Unknown");
+type UnknownError<E extends unknown> = {
+  [unknownError]: E;
+};
+
 type PerProviderError<
   P extends AbstractProvider,
   Ps extends AbstractProvider[]
-> = MissingDependenciesError<P, MixedProvidedInstance<Ps>>;
+> = MixedProvidedInstance<Ps> extends Dependencies<P>
+  ? never
+  : OrElse<
+      MissingDependenciesError<P, Ps> | IncompatibleDependenciesError<P, Ps>,
+      UnknownError<{
+        reason: "dependency error (details unknown; please report an issue)";
+        providerName: P["name"];
+      }>
+    >;
+type OrElse<T, E> = [T] extends [never] ? E : T;
 
 const missingDependenciesError = Symbol("hokemi.error.MissingDependencies");
-
 type MissingDependenciesError<
   P extends AbstractProvider,
-  I extends unknown
-> = I extends Dependencies<P>
+  Ps extends AbstractProvider[]
+> = MissingDependencyNames<P, Ps> extends never
   ? never
   : {
       [missingDependenciesError]: {
-        reason: "some required dependencies are not provided";
-        requiredBy: P["name"];
-        dependencyNames: MissingDependencyNames<Dependencies<P>, I>;
+        reason: "some dependencies are missing";
+        providerName: P["name"];
+        dependencyNames: MissingDependencyNames<P, Ps>;
       };
     };
-type Dependencies<P extends AbstractProvider> = P extends Provider<string, unknown, infer D>
-  ? D
+type MissingDependencyNames<
+  P extends AbstractProvider,
+  Ps extends AbstractProvider[]
+> = _MissingDependencyNames<Dependencies<P>, MixedProvidedInstance<Ps>>;
+type _MissingDependencyNames<D extends unknown, I extends unknown> = D extends unknown
+  ? Wrap<Exclude<keyof D, keyof I>>
   : never;
-type MissingDependencyNames<D extends unknown, T extends unknown> = D extends unknown
-  ? [Exclude<keyof D, keyof T>]
+
+const incompatibleDependenciesError = Symbol("hokemi.error.IncompatibleDependencies");
+type IncompatibleDependenciesError<
+  P extends AbstractProvider,
+  Ps extends AbstractProvider[]
+> = IncompatibleDependencyNames<P, Ps> extends never
+  ? never
+  : {
+      [incompatibleDependenciesError]: {
+        reason: "some dependencies are incompatible";
+        providerName: P["name"];
+        dependencyNames: IncompatibleDependencyNames<P, Ps>;
+      };
+    };
+type IncompatibleDependencyNames<
+  P extends AbstractProvider,
+  Ps extends AbstractProvider[]
+> = _IncompatibleDependencyNames<Dependencies<P>, MixedProvidedInstance<Ps>>;
+type _IncompatibleDependencyNames<D extends unknown, I extends unknown> = D extends unknown
+  ? Wrap<{ [K in keyof D & keyof I]: I[K] extends D[K] ? never : K }[keyof D & keyof I]>
   : never;
+
+type Wrap<T> = [T] extends [never] ? never : [T];
 
 export function mixer<Ps extends AbstractProvider[]>(...providers: Ps): Mixer<Ps> {
   const mix: MixerMix<Ps> = (...args) => mixer(...providers, ...args);
