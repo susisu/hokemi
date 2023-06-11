@@ -36,6 +36,8 @@ describe("Instance", () => {
 
 describe("MixedInstance", () => {
   it("returns a mixed instance type of the components", () => {
+    assertType<Equals<MixedInstance<[]>, {}>>();
+
     type FooComponent = Component<"foo", { getFoo: () => number }>;
     type BarComponent = Component<"bar", { getBar: () => string }>;
     type BazComponent = Component<"baz", { getBaz: () => boolean }>;
