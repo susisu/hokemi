@@ -36,15 +36,15 @@ type PerProviderError<
       }>
     >;
 
-// const unknownError = Symbol("hokemi.error.Unknown");
-declare const unknownError: unique symbol;
+// export const unknownError = Symbol("hokemi.error.Unknown");
+export declare const unknownError: unique symbol;
 
 type UnknownError<E extends unknown> = {
   [unknownError]: E;
 };
 
-// const missingDependenciesError = Symbol("hokemi.error.MissingDependencies");
-declare const missingDependenciesError: unique symbol;
+// export const missingDependenciesError = Symbol("hokemi.error.MissingDependencies");
+export declare const missingDependenciesError: unique symbol;
 
 type MissingDependenciesError<
   P extends AbstractProvider,
@@ -75,8 +75,8 @@ type _MissingDependencies<D extends unknown, I extends unknown> = D extends unkn
     >
   : never;
 
-// const incompatibleDependenciesError = Symbol("hokemi.error.IncompatibleDependencies");
-declare const incompatibleDependenciesError: unique symbol;
+// export const incompatibleDependenciesError = Symbol("hokemi.error.IncompatibleDependencies");
+export declare const incompatibleDependenciesError: unique symbol;
 
 type IncompatibleDependenciesError<
   P extends AbstractProvider,
