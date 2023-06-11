@@ -106,22 +106,34 @@ export function mixer<Ps extends AbstractProvider[]>(...providers: Ps): Mixer<Ps
   // eslint-disable-next-line @susisu/safe-typescript/no-type-assertion
   const make: MixerMake<Ps> = (() => {
     const app = {};
-    const instancex: Array<Readonly<{ name: string; value: unknown }>> = [];
+    const instances = new Map<string, unknown>();
+    let ready: boolean = false;
+
     for (const provider of providers) {
-      instancex.push({
-        name: provider.name,
-        // eslint-disable-next-line @susisu/safe-typescript/no-type-assertion
-        value: provider.factory(app as never),
-      });
-    }
-    for (const instance of instancex) {
-      Object.defineProperty(app, instance.name, {
-        value: instance.value,
+      const name = provider.name;
+      Object.defineProperty(app, name, {
+        // eslint-disable-next-line @typescript-eslint/no-loop-func
+        get: (): unknown => {
+          if (!ready) {
+            throw new Error(`you cannot use '${name}' during initialization`);
+          }
+          // assert(instances.has(name));
+          return instances.get(name);
+        },
         configurable: true,
         enumerable: true,
-        writable: true,
       });
     }
+
+    for (const provider of providers) {
+      const name = provider.name;
+      // eslint-disable-next-line @susisu/safe-typescript/no-type-assertion
+      const value = provider.factory(app as never);
+      instances.set(name, value);
+    }
+
+    ready = true;
+
     return app;
   }) as MixerMake<Ps>;
 
