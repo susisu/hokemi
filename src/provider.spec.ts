@@ -1,4 +1,4 @@
-import type { Compat, Equals } from "./__tests__/types";
+import type { Equals } from "./__tests__/types";
 import { assertType } from "./__tests__/types";
 import type { Component } from "./component";
 import type {
@@ -69,7 +69,7 @@ describe("MixedProvidedInstance", () => {
     type BarProvider = Provider<"bar", { getBar: () => string }, {}>;
     type BazProvider = Provider<"baz", { getBaz: () => boolean }, {}>;
     assertType<
-      Compat<
+      Equals<
         MixedProvidedInstance<[FooProvider, BarProvider, BazProvider]>,
         Readonly<{
           foo: { getFoo: () => number };
@@ -81,7 +81,7 @@ describe("MixedProvidedInstance", () => {
 
     type Bar2Provider = Provider<"bar", { getBar2: () => string }, {}>;
     assertType<
-      Compat<
+      Equals<
         MixedProvidedInstance<[FooProvider, BarProvider, BazProvider, Bar2Provider]>,
         Readonly<{
           foo: { getFoo: () => number };
@@ -97,7 +97,7 @@ describe("MixedProvidedInstance", () => {
     type BarProvider = Provider<"bar", { getBar: () => string }, {}>;
     type BazProvider = Provider<"baz", { getBaz: () => boolean }, {}>;
     assertType<
-      Compat<
+      Equals<
         MixedProvidedInstance<[FooProvider, BarProvider] | [BazProvider]>,
         | Readonly<{
             foo: { getFoo: () => number };
