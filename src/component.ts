@@ -1,6 +1,7 @@
 import type { Extend, IsFiniteString, IsSingleton } from "./utils";
 
-const componentType = Symbol("hokemi.type.Component");
+// const componentType = Symbol("hokemi.type.Component");
+declare const componentType: unique symbol;
 
 export type Component<N extends string, T extends unknown> = {
   // eslint-disable-next-line @typescript-eslint/naming-convention
