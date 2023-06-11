@@ -37,14 +37,20 @@ describe("IsSingleton", () => {
 });
 
 describe("Extend", () => {
-  it("returns an intersection type of the two object types; common members are overrided by the latter", () => {
+  it("returns a merged object type of the two object types; common members are overrided by the latter", () => {
     assertType<Equals<Extend<{}, {}>, {}>>();
-    assertType<Equals<Extend<{ foo: "foo" }, { bar: "bar" }>, { foo: "foo" } & { bar: "bar" }>>();
+    assertType<Equals<Extend<{ foo: "foo" }, { bar: "bar" }>, { foo: "foo"; bar: "bar" }>>();
     assertType<
       Equals<
         Extend<{ foo: "foo"; xxx: "xxx-1" }, { bar: "bar"; xxx: "xxx-2" }>,
-        { foo: "foo" } & { bar: "bar"; xxx: "xxx-2" }
+        { foo: "foo"; bar: "bar"; xxx: "xxx-2" }
       >
+    >();
+  });
+
+  it("keeps the original property modifiers", () => {
+    assertType<
+      Equals<Extend<{ readonly foo: "foo" }, { bar?: "bar" }>, { readonly foo: "foo"; bar?: "bar" }>
     >();
   });
 
@@ -55,8 +61,7 @@ describe("Extend", () => {
           { foo: "foo"; xxx: "xxx-1" } | { bar: "bar"; xxx: "xxx-2" },
           { baz: "baz"; xxx: "xxx-3" }
         >,
-        | ({ foo: "foo" } & { baz: "baz"; xxx: "xxx-3" })
-        | ({ bar: "bar" } & { baz: "baz"; xxx: "xxx-3" })
+        { foo: "foo"; baz: "baz"; xxx: "xxx-3" } | { bar: "bar"; baz: "baz"; xxx: "xxx-3" }
       >
     >();
     assertType<
@@ -65,8 +70,7 @@ describe("Extend", () => {
           { foo: "foo"; xxx: "xxx-1" },
           { bar: "bar"; xxx: "xxx-2" } | { baz: "baz"; xxx: "xxx-3" }
         >,
-        | ({ foo: "foo" } & { bar: "bar"; xxx: "xxx-2" })
-        | ({ foo: "foo" } & { baz: "baz"; xxx: "xxx-3" })
+        { foo: "foo"; bar: "bar"; xxx: "xxx-2" } | { foo: "foo"; baz: "baz"; xxx: "xxx-3" }
       >
     >();
   });

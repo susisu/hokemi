@@ -15,8 +15,9 @@ export type IsSingleton<T> = [T] extends [never] ? false : _IsSingleton<T, T>;
 type _IsSingleton<T, U> = T extends unknown ? ([U] extends [T] ? true : false) : false;
 
 export type Extend<A, B> = B extends unknown
-  ? { [K in keyof A as K extends keyof B ? never : K]: A[K] } & B
+  ? Merge<{ [K in keyof A as K extends keyof B ? never : K]: A[K] } & B>
   : never;
+type Merge<T> = { [K in keyof T]: T[K] };
 
 export type OrElse<T, E> = [T] extends [never] ? E : T;
 
