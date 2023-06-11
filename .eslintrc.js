@@ -15,7 +15,6 @@ module.exports = {
       env: {
         es6: true,
       },
-      rules: {},
     },
     // test files
     {
@@ -23,6 +22,15 @@ module.exports = {
       extends: ["plugin:jest/recommended", "plugin:jest-formatting/recommended"],
       env: {
         "jest/globals": true,
+      },
+      rules: {
+        "jest/expect-expect": [
+          "error",
+          {
+            assertFunctionNames: ["expect", "assertType"],
+            additionalTestBlockFunctions: [],
+          },
+        ],
       },
     },
     // script files
