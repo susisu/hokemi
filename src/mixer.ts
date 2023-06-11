@@ -1,4 +1,9 @@
-import type { AbstractProvider, Dependencies, MixedProvidedInstance } from "./provider";
+import type {
+  AbstractProvider,
+  ProviderDependencies,
+  ProviderName,
+  MixedProvidedInstance,
+} from "./provider";
 import type { OrElse, Wrap } from "./utils";
 
 export type Mixer<Ps extends AbstractProvider[]> = Readonly<{
@@ -21,13 +26,13 @@ type MixerError<Ps extends AbstractProvider[]> = {
 type PerProviderError<
   P extends AbstractProvider,
   Ps extends AbstractProvider[]
-> = MixedProvidedInstance<Ps> extends Dependencies<P>
+> = MixedProvidedInstance<Ps> extends ProviderDependencies<P>
   ? never
   : OrElse<
       MissingDependenciesError<P, Ps> | IncompatibleDependenciesError<P, Ps>,
       UnknownError<{
         reason: "provider has an unknown dependency error (this is likely a bug; please file an issue)";
-        providerName: P["name"];
+        providerName: ProviderName<P>;
       }>
     >;
 
@@ -49,14 +54,14 @@ type MissingDependenciesError<
   : {
       [missingDependenciesError]: {
         reason: "provider has missing dependencies";
-        providerName: P["name"];
+        providerName: ProviderName<P>;
         dependencies: MissingDependencies<P, Ps>;
       };
     };
 type MissingDependencies<
   P extends AbstractProvider,
   Ps extends AbstractProvider[]
-> = _MissingDependencies<Dependencies<P>, MixedProvidedInstance<Ps>>;
+> = _MissingDependencies<ProviderDependencies<P>, MixedProvidedInstance<Ps>>;
 type _MissingDependencies<D extends unknown, I extends unknown> = D extends unknown
   ? Wrap<
       {
@@ -81,14 +86,14 @@ type IncompatibleDependenciesError<
   : {
       [incompatibleDependenciesError]: {
         reason: "provider has incompatible dependencies";
-        providerName: P["name"];
+        providerName: ProviderName<P>;
         dependencies: IncompatibleDependencies<P, Ps>;
       };
     };
 type IncompatibleDependencies<
   P extends AbstractProvider,
   Ps extends AbstractProvider[]
-> = _IncompatibleDependencies<Dependencies<P>, MixedProvidedInstance<Ps>>;
+> = _IncompatibleDependencies<ProviderDependencies<P>, MixedProvidedInstance<Ps>>;
 type _IncompatibleDependencies<D extends unknown, I extends unknown> = D extends unknown
   ? Wrap<
       {

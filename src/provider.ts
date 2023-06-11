@@ -11,7 +11,15 @@ export type Provider<N extends string, T extends unknown, D extends unknown> = R
 
 export type AbstractProvider = Provider<string, unknown, never>;
 
-export type Dependencies<P extends AbstractProvider> = P extends Provider<string, unknown, infer D>
+export type ProviderName<P extends AbstractProvider> = P extends Provider<infer N, unknown, never>
+  ? N
+  : never;
+
+export type ProviderDependencies<P extends AbstractProvider> = P extends Provider<
+  string,
+  unknown,
+  infer D
+>
   ? D
   : never;
 
