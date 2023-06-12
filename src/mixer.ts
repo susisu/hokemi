@@ -4,6 +4,7 @@ import type {
   ProviderName,
   MixedProvidedInstance,
 } from "./provider";
+import { execFactory } from "./provider";
 import type { OrElse, Wrap } from "./utils";
 
 export type Mixer<Ps extends AbstractProvider[]> = Readonly<{
@@ -129,7 +130,7 @@ export function mixer<Ps extends AbstractProvider[]>(...providers: Ps): Mixer<Ps
         }
         lock.add(name);
         // eslint-disable-next-line @susisu/safe-typescript/no-type-assertion
-        const value = factory(mixed as never);
+        const value = execFactory(factory, mixed as never);
         lock.delete(name);
         instances.set(name, value);
         return value;

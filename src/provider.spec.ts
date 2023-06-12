@@ -2,6 +2,7 @@ import type { Equals } from "./__tests__/types";
 import { assertType } from "./__tests__/types";
 import type { Component } from "./component";
 import type {
+  Factory,
   Impl,
   ImplArgs,
   MixedProvidedInstance,
@@ -10,7 +11,32 @@ import type {
   ProviderName,
   ReconstructComponent,
 } from "./provider";
-import { impl } from "./provider";
+import { impl, execFactory } from "./provider";
+
+describe("execFactory", () => {
+  it("calls the factory if it is a function", () => {
+    type Foo = { getFoo: () => number };
+    const factory = (foo: number): Foo => ({ getFoo: () => foo });
+    const value = execFactory(factory, 42);
+    expect(value.getFoo()).toBe(42);
+  });
+
+  it("constructs an instance of the factory if it is a class", () => {
+    const factory = class Foo {
+      private foo: number;
+
+      constructor(foo: number) {
+        this.foo = foo;
+      }
+
+      getFoo(): number {
+        return this.foo;
+      }
+    };
+    const value = execFactory(factory, 42);
+    expect(value.getFoo()).toBe(42);
+  });
+});
 
 describe("ProviderName", () => {
   it("returns the name of the provider", () => {
@@ -157,12 +183,13 @@ describe("ImplArgs", () => {
         ImplArgs<FooComponent, [BarComponent, BazComponent]>,
         [
           "foo",
-          (
-            deps: Readonly<{
+          Factory<
+            { getFoo: () => number },
+            Readonly<{
               bar: { getBar: () => string };
               baz: { getBaz: () => boolean };
             }>
-          ) => { getFoo: () => number }
+          >
         ]
       >
     >();
@@ -175,8 +202,8 @@ describe("ImplArgs", () => {
     assertType<
       Equals<
         ImplArgs<FooComponent | BarComponent, [BazComponent]>,
-        | ["foo", (deps: Readonly<{ baz: { getBaz: () => boolean } }>) => { getFoo: () => number }]
-        | ["bar", (deps: Readonly<{ baz: { getBaz: () => boolean } }>) => { getBar: () => string }]
+        | ["foo", Factory<{ getFoo: () => number }, Readonly<{ baz: { getBaz: () => boolean } }>>]
+        | ["bar", Factory<{ getBar: () => string }, Readonly<{ baz: { getBaz: () => boolean } }>>]
       >
     >();
   });
@@ -193,11 +220,11 @@ describe("impl", () => {
 
     assertType<Equals<typeof foo, Impl<FooComponent, [BarComponent]>>>();
     expect(foo.name).toBe("foo");
-    const instance = foo.factory({
+    const value = execFactory(foo.factory, {
       bar: {
         getBar: () => "Hello",
       },
     });
-    expect(instance.getFoo()).toBe(5);
+    expect(value.getFoo()).toBe(5);
   });
 });

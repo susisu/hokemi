@@ -89,9 +89,13 @@ describe("Mixer", () => {
 });
 
 describe("mixer", () => {
-  type FooComponent = Component<"foo", { getFoo: () => number }>;
-  type BarComponent = Component<"bar", { getBar: () => string }>;
-  type BazComponent = Component<"baz", { getBaz: () => boolean }>;
+  type Foo = { getFoo: () => number };
+  type Bar = { getBar: () => string };
+  type Baz = { getBaz: () => boolean };
+
+  type FooComponent = Component<"foo", Foo>;
+  type BarComponent = Component<"bar", Bar>;
+  type BazComponent = Component<"baz", Baz>;
 
   it("mixes components and makes a mixed instance", () => {
     const foo = impl<FooComponent, [BarComponent, BazComponent]>("foo", ({ bar, baz }) => ({
@@ -153,5 +157,49 @@ describe("mixer", () => {
     expect(() => {
       mixer(foo, bar).make();
     }).not.toThrow();
+  });
+
+  it("accepts classes as compoent factories", () => {
+    const foo = impl<FooComponent, [BarComponent, BazComponent]>(
+      "foo",
+      class FooImpl {
+        private bar: Bar;
+        private baz: Baz;
+
+        constructor({ bar, baz }: { bar: Bar; baz: Baz }) {
+          this.bar = bar;
+          this.baz = baz;
+        }
+
+        getFoo(): number {
+          return this.baz.getBaz() ? this.bar.getBar().length : 42;
+        }
+      }
+    );
+    const bar = impl<BarComponent, [BazComponent]>(
+      "bar",
+      class BarImpl {
+        private baz: Baz;
+
+        constructor({ baz }: { baz: Baz }) {
+          this.baz = baz;
+        }
+
+        getBar(): string {
+          return this.baz.getBaz() ? "Hello" : "Bye";
+        }
+      }
+    );
+    const baz = impl<BazComponent>(
+      "baz",
+      class BazImpl {
+        getBaz(): boolean {
+          return true;
+        }
+      }
+    );
+
+    const mixed = mixer(foo, bar, baz).make();
+    expect(mixed.foo.getFoo()).toBe(5);
   });
 });
