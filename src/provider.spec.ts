@@ -187,8 +187,8 @@ describe("impl", () => {
     type FooComponent = Component<"foo", { getFoo: () => number }>;
     type BarComponent = Component<"bar", { getBar: () => string }>;
 
-    const foo = impl<FooComponent, [BarComponent]>("foo", app => ({
-      getFoo: () => app.bar.getBar().length,
+    const foo = impl<FooComponent, [BarComponent]>("foo", ({ bar }) => ({
+      getFoo: () => bar.getBar().length,
     }));
 
     assertType<Equals<typeof foo, Impl<FooComponent, [BarComponent]>>>();

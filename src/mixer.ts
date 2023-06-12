@@ -113,36 +113,41 @@ export function mixer<Ps extends AbstractProvider[]>(...providers: Ps): Mixer<Ps
 
   // eslint-disable-next-line @susisu/safe-typescript/no-type-assertion
   const make: MixerMake<Ps> = (() => {
-    const app = {};
-    const instances = new Map<string, unknown>();
-    let ready: boolean = false;
+    const mixed = {};
 
-    for (const provider of providers) {
-      const name = provider.name;
-      Object.defineProperty(app, name, {
-        // eslint-disable-next-line @typescript-eslint/no-loop-func
-        get: (): unknown => {
-          if (!ready) {
-            throw new Error(`you cannot use '${name}' during initialization`);
-          }
-          // assert(instances.has(name));
+    const instances = new Map<string, unknown>();
+    const getters = new Map<string, () => unknown>();
+    const lock = new Set<string>();
+
+    for (const { name, factory } of providers) {
+      const getter = (): unknown => {
+        if (instances.has(name)) {
           return instances.get(name);
-        },
+        }
+        if (lock.has(name)) {
+          throw new Error(`'${name}' is referenced during its initialization`);
+        }
+        lock.add(name);
+        // eslint-disable-next-line @susisu/safe-typescript/no-type-assertion
+        const value = factory(mixed as never);
+        lock.delete(name);
+        instances.set(name, value);
+        return value;
+      };
+      getters.set(name, getter);
+      Object.defineProperty(mixed, name, {
+        get: getter,
         configurable: true,
         enumerable: true,
       });
     }
 
-    for (const provider of providers) {
-      const name = provider.name;
-      // eslint-disable-next-line @susisu/safe-typescript/no-type-assertion
-      const value = provider.factory(app as never);
-      instances.set(name, value);
+    // instantiate all the components
+    for (const getter of getters.values()) {
+      getter();
     }
 
-    ready = true;
-
-    return app;
+    return mixed;
   }) as MixerMake<Ps>;
 
   return { mix, make };

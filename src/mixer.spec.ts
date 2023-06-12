@@ -93,38 +93,65 @@ describe("mixer", () => {
   type BarComponent = Component<"bar", { getBar: () => string }>;
   type BazComponent = Component<"baz", { getBaz: () => boolean }>;
 
-  const foo = impl<FooComponent, [BarComponent, BazComponent]>("foo", deps => ({
-    getFoo: () => (deps.baz.getBaz() ? deps.bar.getBar().length : 42),
-  }));
-  const bar = impl<BarComponent, [BazComponent]>("bar", deps => ({
-    getBar: () => (deps.baz.getBaz() ? "Hello" : "Bye"),
-  }));
-  const baz = impl<BazComponent>("baz", () => ({
-    getBaz: () => true,
-  }));
-
   it("mixes components and makes a mixed instance", () => {
-    const app = mixer(foo, bar, baz).make();
-    expect(app.foo.getFoo()).toBe(5);
+    const foo = impl<FooComponent, [BarComponent, BazComponent]>("foo", ({ bar, baz }) => ({
+      getFoo: () => (baz.getBaz() ? bar.getBar().length : 42),
+    }));
+    const bar = impl<BarComponent, [BazComponent]>("bar", ({ baz }) => ({
+      getBar: () => (baz.getBaz() ? "Hello" : "Bye"),
+    }));
+    const baz = impl<BazComponent>("baz", () => ({
+      getBaz: () => true,
+    }));
+
+    const mixed = mixer(foo, bar, baz).make();
+    expect(mixed.foo.getFoo()).toBe(5);
   });
 
   it("overrides previous mixed components", () => {
-    const baz2 = impl<BazComponent, []>("baz", () => ({
+    const foo = impl<FooComponent, [BarComponent, BazComponent]>("foo", ({ bar, baz }) => ({
+      getFoo: () => (baz.getBaz() ? bar.getBar().length : 42),
+    }));
+    const bar = impl<BarComponent, [BazComponent]>("bar", ({ baz }) => ({
+      getBar: () => (baz.getBaz() ? "Hello" : "Bye"),
+    }));
+    const baz = impl<BazComponent>("baz", () => ({
+      getBaz: () => true,
+    }));
+    const baz2 = impl<BazComponent>("baz", () => ({
       getBaz: () => false,
     }));
-    const app = mixer(foo, bar, baz).mix(baz2).make();
-    expect(app.foo.getFoo()).toBe(42);
+
+    const mixed = mixer(foo, bar, baz).mix(baz2).make();
+    expect(mixed.foo.getFoo()).toBe(42);
   });
 
-  it("throws if dependencies are used during initialization", () => {
-    const bar2 = impl<BarComponent, [BazComponent]>("bar", deps => {
-      const x = deps.baz.getBaz();
-      return {
-        getBar: () => (x ? "Hello" : "Bye"),
-      };
-    });
+  it("throws if a component is referenced during its initialization", () => {
+    // foo and bar reference each other during initialization
+    const foo = impl<FooComponent, [BarComponent]>("foo", ({ bar }) => ({
+      getFoo: () => bar.getBar().length,
+    }));
+    const bar = impl<BarComponent, [FooComponent]>("bar", ({ foo }) => ({
+      getBar: () => foo.getFoo().toString(),
+    }));
+
     expect(() => {
-      mixer(foo, bar2, baz).make();
-    }).toThrow("you cannot use 'baz' during initialization");
+      mixer(foo, bar).make();
+    }).toThrow("'foo' is referenced during its initialization");
+  });
+
+  it("does not throw if a component is referenced after its initialization, even if there is a circular dependency", () => {
+    // foo references bar during its initialization, while bar defers referencing foo until it is actually used
+    // (this is not a good example though; it loops forever if you call foo.getFoo() or bar.getBar())
+    const foo = impl<FooComponent, [BarComponent]>("foo", ({ bar }) => ({
+      getFoo: () => bar.getBar().length,
+    }));
+    const bar = impl<BarComponent, [FooComponent]>("bar", deps => ({
+      getBar: () => deps.foo.getFoo().toString(),
+    }));
+
+    expect(() => {
+      mixer(foo, bar).make();
+    }).not.toThrow();
   });
 });
