@@ -1,10 +1,19 @@
 import type { AbstractComponent, Component, MixedInstance } from "./component";
 
-export type FactoryFunction<T extends unknown, D extends unknown> = (deps: D) => T;
-export type FactoryClass<T extends unknown, D extends unknown> = new (deps: D) => T;
+const providerType = Symbol("hokemi.type.Provider");
+
+export type Provider<N extends string, T extends unknown, D extends unknown> = Readonly<{
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  __type: typeof providerType;
+  name: N;
+  factory: Factory<T, D>;
+}>;
+
 export type Factory<T extends unknown, D extends unknown> =
   | FactoryFunction<T, D>
   | FactoryClass<T, D>;
+export type FactoryFunction<T extends unknown, D extends unknown> = (deps: D) => T;
+export type FactoryClass<T extends unknown, D extends unknown> = new (deps: D) => T;
 
 export function execFactory<T extends unknown, D extends unknown>(
   factory: Factory<T, D>,
@@ -20,15 +29,6 @@ export function execFactory<T extends unknown, D extends unknown>(
     return (factory as FactoryFunction<T, D>)(deps);
   }
 }
-
-const providerType = Symbol("hokemi.type.Provider");
-
-export type Provider<N extends string, T extends unknown, D extends unknown> = Readonly<{
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  __type: typeof providerType;
-  name: N;
-  factory: Factory<T, D>;
-}>;
 
 export type AbstractProvider = Provider<string, unknown, never>;
 
