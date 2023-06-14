@@ -106,7 +106,10 @@ describe("mixer", () => {
       getBaz: () => true,
     }));
 
-    const mixed = mixer(foo, bar, baz).new();
+    const m = mixer(foo, bar, baz);
+    assertType<Equals<typeof m, Mixer<[typeof foo, typeof bar, typeof baz]>>>();
+
+    const mixed = m.new();
     assertType<Equals<typeof mixed, Mixed<[FooComponent, BarComponent, BazComponent]>>>();
     expect(mixed.foo.getFoo()).toBe(5);
   });
@@ -125,7 +128,10 @@ describe("mixer", () => {
       getBaz: () => false,
     }));
 
-    const mixed = mixer(foo, bar, baz).with(baz2).new();
+    const m = mixer(foo, bar, baz).with(baz2);
+    assertType<Equals<typeof m, Mixer<[typeof foo, typeof bar, typeof baz, typeof baz2]>>>();
+
+    const mixed = m.new();
     assertType<Equals<typeof mixed, Mixed<[FooComponent, BarComponent, BazComponent]>>>();
     expect(mixed.foo.getFoo()).toBe(42);
   });
@@ -199,7 +205,10 @@ describe("mixer", () => {
       }
     );
 
-    const mixed = mixer(foo, bar, baz).new();
+    const m = mixer(foo, bar, baz);
+    assertType<Equals<typeof m, Mixer<[typeof foo, typeof bar, typeof baz]>>>();
+
+    const mixed = m.new();
     assertType<Equals<typeof mixed, Mixed<[FooComponent, BarComponent, BazComponent]>>>();
     expect(mixed.foo.getFoo()).toBe(5);
   });
