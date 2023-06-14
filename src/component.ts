@@ -23,10 +23,10 @@ type _Instance<N extends string, T extends unknown> = IsFiniteString<N> extends 
 
 export type Mixed<Cs extends AbstractComponent[]> = _Mixed<Cs, {}>;
 // prettier-ignore
-type _Mixed<Cs extends AbstractComponent[], I extends unknown> =
-    Cs extends [] ? I
+type _Mixed<Cs extends AbstractComponent[], M extends {}> =
+    Cs extends [] ? M
   : Cs extends [
       infer X extends AbstractComponent,
       ...infer Xs extends AbstractComponent[]
-    ] ? _Mixed<Xs, Extend<I, Instance<X>>>
+    ] ? _Mixed<Xs, Extend<M, Instance<X>>>
   : never;
