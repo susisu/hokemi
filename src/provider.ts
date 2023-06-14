@@ -36,12 +36,10 @@ export type ProviderName<P extends AbstractProvider> = P extends Provider<infer 
   ? N
   : never;
 
-export type ProviderDependencies<P extends AbstractProvider> = P extends Provider<
-  string,
-  unknown,
-  infer D
->
-  ? D
+export type ProviderDependencies<P extends AbstractProvider> = (
+  P extends Provider<string, unknown, infer D> ? (deps: D) => unknown : never
+) extends (deps: infer I) => unknown
+  ? I
   : never;
 
 export type ReconstructComponent<P extends AbstractProvider> = P extends Provider<

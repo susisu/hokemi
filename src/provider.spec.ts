@@ -46,7 +46,11 @@ describe("ProviderName", () => {
 
   it("distributes over union members", () => {
     type FooProvider = Provider<"foo", { getFoo: () => number }, { bar: { getBar: () => string } }>;
-    type BarProvider = Provider<"bar", { getBar: () => string }, {}>;
+    type BarProvider = Provider<
+      "bar",
+      { getBar: () => string },
+      { baz: { getBaz: () => boolean } }
+    >;
     assertType<Equals<ProviderName<FooProvider | BarProvider>, "foo" | "bar">>();
   });
 });
@@ -57,13 +61,17 @@ describe("ProviderDependencies", () => {
     assertType<Equals<ProviderDependencies<FooProvider>, { bar: { getBar: () => string } }>>();
   });
 
-  it("distributes over union members", () => {
+  it("returns the intersection of the dependencies of all the union members", () => {
     type FooProvider = Provider<"foo", { getFoo: () => number }, { bar: { getBar: () => string } }>;
-    type BarProvider = Provider<"bar", { getBar: () => string }, {}>;
+    type BarProvider = Provider<
+      "bar",
+      { getBar: () => string },
+      { baz: { getBaz: () => boolean } }
+    >;
     assertType<
       Equals<
         ProviderDependencies<FooProvider | BarProvider>,
-        { bar: { getBar: () => string } } | {}
+        { bar: { getBar: () => string } } & { baz: { getBaz: () => boolean } }
       >
     >();
   });
