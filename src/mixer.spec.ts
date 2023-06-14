@@ -166,7 +166,7 @@ describe("mixer", () => {
         private bar: Bar;
         private baz: Baz;
 
-        constructor({ bar, baz }: { bar: Bar; baz: Baz }) {
+        constructor({ bar, baz }: MixedInstance<[BarComponent, BazComponent]>) {
           this.bar = bar;
           this.baz = baz;
         }
@@ -181,7 +181,7 @@ describe("mixer", () => {
       class BarImpl {
         private baz: Baz;
 
-        constructor({ baz }: { baz: Baz }) {
+        constructor({ baz }: MixedInstance<[BazComponent]>) {
           this.baz = baz;
         }
 
