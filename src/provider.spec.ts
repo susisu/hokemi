@@ -18,6 +18,7 @@ describe("execFactory", () => {
     type Foo = { getFoo: () => number };
     const factory = (foo: number): Foo => ({ getFoo: () => foo });
     const value = execFactory(factory, 42);
+    assertType<Equals<typeof value, Foo>>();
     expect(value.getFoo()).toBe(42);
   });
 
@@ -34,6 +35,7 @@ describe("execFactory", () => {
       }
     };
     const value = execFactory(factory, 42);
+    assertType<Equals<typeof value, InstanceType<typeof factory>>>();
     expect(value.getFoo()).toBe(42);
   });
 });
@@ -225,7 +227,6 @@ describe("impl", () => {
     const foo = impl<FooComponent, [BarComponent]>("foo", ({ bar }) => ({
       getFoo: () => bar.getBar().length,
     }));
-
     assertType<Equals<typeof foo, Impl<FooComponent, [BarComponent]>>>();
     expect(foo.name).toBe("foo");
     const value = execFactory(foo.factory, {
