@@ -1,4 +1,4 @@
-import type { AbstractComponent, Component, MixedInstance } from "./component";
+import type { AbstractComponent, Component, Mixed } from "./component";
 
 const providerType = Symbol("hokemi.type.Provider");
 
@@ -52,14 +52,14 @@ export type ReconstructComponent<P extends AbstractProvider> = P extends Provide
   ? Component<N, T>
   : never;
 
-export type MixedProvidedInstance<Ps extends AbstractProvider[]> = MixedInstance<{
+export type MixedProvidedInstance<Ps extends AbstractProvider[]> = Mixed<{
   [K in keyof Ps]: ReconstructComponent<Ps[K]>;
 }>;
 
 export type Impl<
   C extends AbstractComponent,
   Ds extends AbstractComponent[] = []
-> = C extends Component<infer N, infer T> ? Provider<N, T, MixedInstance<Ds>> : never;
+> = C extends Component<infer N, infer T> ? Provider<N, T, Mixed<Ds>> : never;
 
 export type ImplArgs<C extends AbstractComponent, Ds extends AbstractComponent[] = []> = _ImplArgs<
   Impl<C, Ds>

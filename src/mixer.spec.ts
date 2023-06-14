@@ -1,6 +1,6 @@
 import type { Equals } from "./__tests__/types";
 import { assertType } from "./__tests__/types";
-import type { Component, MixedInstance } from "./component";
+import type { Component, Mixed } from "./component";
 import type { Mixer, incompatibleDependenciesError, missingDependenciesError } from "./mixer";
 import { mixer } from "./mixer";
 import type { Impl } from "./provider";
@@ -22,9 +22,7 @@ describe("Mixer", () => {
 
     it("creates an instance if there is no error", () => {
       type M = Mixer<[FooImpl, BarImpl, BazImpl]>;
-      assertType<
-        Equals<M["make"], () => MixedInstance<[FooComponent, BarComponent, BazComponent]>>
-      >();
+      assertType<Equals<M["make"], () => Mixed<[FooComponent, BarComponent, BazComponent]>>>();
     });
 
     it("can report missing dependencies errors", () => {
@@ -166,7 +164,7 @@ describe("mixer", () => {
         private bar: Bar;
         private baz: Baz;
 
-        constructor({ bar, baz }: MixedInstance<[BarComponent, BazComponent]>) {
+        constructor({ bar, baz }: Mixed<[BarComponent, BazComponent]>) {
           this.bar = bar;
           this.baz = baz;
         }
@@ -181,7 +179,7 @@ describe("mixer", () => {
       class BarImpl {
         private baz: Baz;
 
-        constructor({ baz }: MixedInstance<[BazComponent]>) {
+        constructor({ baz }: Mixed<[BazComponent]>) {
           this.baz = baz;
         }
 

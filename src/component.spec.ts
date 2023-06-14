@@ -1,6 +1,6 @@
 import type { Equals } from "./__tests__/types";
 import { assertType } from "./__tests__/types";
-import type { Component, Instance, MixedInstance } from "./component";
+import type { Component, Instance, Mixed } from "./component";
 
 describe("Instance", () => {
   it("returns an object type with a property whose name is the component name and whose type is the component type", () => {
@@ -36,14 +36,14 @@ describe("Instance", () => {
 
 describe("MixedInstance", () => {
   it("returns a mixed instance type of the components", () => {
-    assertType<Equals<MixedInstance<[]>, {}>>();
+    assertType<Equals<Mixed<[]>, {}>>();
 
     type FooComponent = Component<"foo", { getFoo: () => number }>;
     type BarComponent = Component<"bar", { getBar: () => string }>;
     type BazComponent = Component<"baz", { getBaz: () => boolean }>;
     assertType<
       Equals<
-        MixedInstance<[FooComponent, BarComponent, BazComponent]>,
+        Mixed<[FooComponent, BarComponent, BazComponent]>,
         Readonly<{
           foo: { getFoo: () => number };
           bar: { getBar: () => string };
@@ -55,7 +55,7 @@ describe("MixedInstance", () => {
     type Bar2Component = Component<"bar", { getBar2: () => bigint }>;
     assertType<
       Equals<
-        MixedInstance<[FooComponent, BarComponent, BazComponent, Bar2Component]>,
+        Mixed<[FooComponent, BarComponent, BazComponent, Bar2Component]>,
         Readonly<{
           foo: { getFoo: () => number };
           bar: { getBar2: () => bigint };
@@ -71,7 +71,7 @@ describe("MixedInstance", () => {
     type BazComponent = Component<"baz", { getBaz: () => boolean }>;
     assertType<
       Equals<
-        MixedInstance<[FooComponent, BarComponent] | [BazComponent]>,
+        Mixed<[FooComponent, BarComponent] | [BazComponent]>,
         | Readonly<{
             foo: { getFoo: () => number };
             bar: { getBar: () => string };
