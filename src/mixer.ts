@@ -8,15 +8,15 @@ import { execFactory } from "./provider";
 import type { OrElse, Wrap } from "./utils";
 
 export type Mixer<Ps extends AbstractProvider[]> = Readonly<{
-  mix: MixerMix<Ps>;
-  make: MixerMake<Ps>;
+  with: MixerMethodWith<Ps>;
+  new: MixerMethodNew<Ps>;
 }>;
 
-type MixerMix<Ps extends AbstractProvider[]> = <Qs extends AbstractProvider[]>(
+type MixerMethodWith<Ps extends AbstractProvider[]> = <Qs extends AbstractProvider[]>(
   ...providers: Qs
 ) => Mixer<[...Ps, ...Qs]>;
 
-type MixerMake<Ps extends AbstractProvider[]> = MixerError<Ps> extends never
+type MixerMethodNew<Ps extends AbstractProvider[]> = MixerError<Ps> extends never
   ? () => MixedProvidedInstance<Ps>
   : MixerError<Ps>;
 
@@ -110,46 +110,45 @@ type _IncompatibleDependencies<D extends unknown, I extends unknown> = D extends
   : never;
 
 export function mixer<Ps extends AbstractProvider[]>(...providers: Ps): Mixer<Ps> {
-  const mix: MixerMix<Ps> = (...otherProviders) => mixer(...providers, ...otherProviders);
+  return {
+    with: (...otherProviders) => mixer(...providers, ...otherProviders),
+    // eslint-disable-next-line @susisu/safe-typescript/no-type-assertion
+    new: (() => {
+      const mixed = {};
 
-  // eslint-disable-next-line @susisu/safe-typescript/no-type-assertion
-  const make: MixerMake<Ps> = (() => {
-    const mixed = {};
+      const instances = new Map<string, unknown>();
+      const getters = new Map<string, () => unknown>();
+      const lock = new Set<string>();
 
-    const instances = new Map<string, unknown>();
-    const getters = new Map<string, () => unknown>();
-    const lock = new Set<string>();
+      for (const { name, factory } of providers) {
+        const getter = (): unknown => {
+          if (instances.has(name)) {
+            return instances.get(name);
+          }
+          if (lock.has(name)) {
+            throw new Error(`'${name}' is referenced during its initialization`);
+          }
+          lock.add(name);
+          // eslint-disable-next-line @susisu/safe-typescript/no-type-assertion
+          const value = execFactory(factory, mixed as never);
+          lock.delete(name);
+          instances.set(name, value);
+          return value;
+        };
+        getters.set(name, getter);
+        Object.defineProperty(mixed, name, {
+          get: getter,
+          configurable: true,
+          enumerable: true,
+        });
+      }
 
-    for (const { name, factory } of providers) {
-      const getter = (): unknown => {
-        if (instances.has(name)) {
-          return instances.get(name);
-        }
-        if (lock.has(name)) {
-          throw new Error(`'${name}' is referenced during its initialization`);
-        }
-        lock.add(name);
-        // eslint-disable-next-line @susisu/safe-typescript/no-type-assertion
-        const value = execFactory(factory, mixed as never);
-        lock.delete(name);
-        instances.set(name, value);
-        return value;
-      };
-      getters.set(name, getter);
-      Object.defineProperty(mixed, name, {
-        get: getter,
-        configurable: true,
-        enumerable: true,
-      });
-    }
+      // instantiate all the components
+      for (const getter of getters.values()) {
+        getter();
+      }
 
-    // instantiate all the components
-    for (const getter of getters.values()) {
-      getter();
-    }
-
-    return mixed;
-  }) as MixerMake<Ps>;
-
-  return { mix, make };
+      return mixed;
+    }) as MixerMethodNew<Ps>,
+  };
 }

@@ -7,7 +7,7 @@ import type { Impl } from "./provider";
 import { impl } from "./provider";
 
 describe("Mixer", () => {
-  describe("make", () => {
+  describe("new", () => {
     type Foo = { getFoo: () => number };
     type Bar = { getBar: () => string };
     type Baz = { getBaz: () => boolean };
@@ -22,14 +22,14 @@ describe("Mixer", () => {
 
     it("creates an instance if there is no error", () => {
       type M = Mixer<[FooImpl, BarImpl, BazImpl]>;
-      assertType<Equals<M["make"], () => Mixed<[FooComponent, BarComponent, BazComponent]>>>();
+      assertType<Equals<M["new"], () => Mixed<[FooComponent, BarComponent, BazComponent]>>>();
     });
 
     it("can report missing dependencies errors", () => {
       type M = Mixer<[FooImpl, BarImpl]>;
       assertType<
         Equals<
-          M["make"],
+          M["new"],
           | {
               [missingDependenciesError]: {
                 reason: "provider has missing dependencies";
@@ -66,7 +66,7 @@ describe("Mixer", () => {
       type M = Mixer<[FooImpl, BarImpl, BazImpl, Bar2Impl]>;
       assertType<
         Equals<
-          M["make"],
+          M["new"],
           {
             [incompatibleDependenciesError]: {
               reason: "provider has incompatible dependencies";
@@ -95,7 +95,7 @@ describe("mixer", () => {
   type BarComponent = Component<"bar", Bar>;
   type BazComponent = Component<"baz", Baz>;
 
-  it("mixes components and makes a mixed instance", () => {
+  it("mixes components and creates a mixed instance", () => {
     const foo = impl<FooComponent, [BarComponent, BazComponent]>("foo", ({ bar, baz }) => ({
       getFoo: () => (baz.getBaz() ? bar.getBar().length : 42),
     }));
@@ -106,7 +106,7 @@ describe("mixer", () => {
       getBaz: () => true,
     }));
 
-    const mixed = mixer(foo, bar, baz).make();
+    const mixed = mixer(foo, bar, baz).new();
     expect(mixed.foo.getFoo()).toBe(5);
   });
 
@@ -124,7 +124,7 @@ describe("mixer", () => {
       getBaz: () => false,
     }));
 
-    const mixed = mixer(foo, bar, baz).mix(baz2).make();
+    const mixed = mixer(foo, bar, baz).with(baz2).new();
     expect(mixed.foo.getFoo()).toBe(42);
   });
 
@@ -138,7 +138,7 @@ describe("mixer", () => {
     }));
 
     expect(() => {
-      mixer(foo, bar).make();
+      mixer(foo, bar).new();
     }).toThrow("'foo' is referenced during its initialization");
   });
 
@@ -153,7 +153,7 @@ describe("mixer", () => {
     }));
 
     expect(() => {
-      mixer(foo, bar).make();
+      mixer(foo, bar).new();
     }).not.toThrow();
   });
 
@@ -197,7 +197,7 @@ describe("mixer", () => {
       }
     );
 
-    const mixed = mixer(foo, bar, baz).make();
+    const mixed = mixer(foo, bar, baz).new();
     expect(mixed.foo.getFoo()).toBe(5);
   });
 });
