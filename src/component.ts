@@ -1,4 +1,4 @@
-import type { Extend, IsFiniteString, IsSingleton } from "./utils";
+import type { Extend, IsFiniteString } from "./utils";
 
 // const componentType = Symbol("hokemi.type.Component");
 declare const componentType: unique symbol;
@@ -16,7 +16,7 @@ export type Instance<C extends AbstractComponent> = C extends Component<infer N,
   ? _Instance<N, T>
   : never;
 type _Instance<N extends string, T extends unknown> = IsFiniteString<N> extends true
-  ? IsSingleton<N> extends true
+  ? N extends unknown
     ? { readonly [N0 in N]: T }
     : never
   : never;

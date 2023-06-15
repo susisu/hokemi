@@ -11,9 +11,6 @@ type _IsFiniteString<S extends string> =
   )
   : never;
 
-export type IsSingleton<T> = [T] extends [never] ? false : _IsSingleton<T, T>;
-type _IsSingleton<T, U> = T extends unknown ? ([U] extends [T] ? true : false) : false;
-
 export type Extend<A extends {}, B extends {}> = B extends unknown
   ? Merge<{ [K in keyof A as K extends keyof B ? never : K]: A[K] } & B>
   : never;

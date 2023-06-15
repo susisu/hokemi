@@ -8,18 +8,25 @@ describe("Instance", () => {
     assertType<Equals<Instance<FooComponent>, Readonly<{ foo: { getFoo: () => number } }>>>();
   });
 
-  it("returns never if the component name is not a singleton string", () => {
-    type Xxx1Component = Component<never, { getXxx: () => number }>;
+  it("returns the union type of object types if the component name is a union string", () => {
+    type XxxComponent = Component<never, { getXxx: () => number }>;
+    assertType<Equals<Instance<XxxComponent>, never>>();
+
+    type FooComponent = Component<"foo1" | "foo2", { getFoo: () => number }>;
+    assertType<
+      Equals<
+        Instance<FooComponent>,
+        Readonly<{ foo1: { getFoo: () => number } }> | Readonly<{ foo2: { getFoo: () => number } }>
+      >
+    >();
+  });
+
+  it("returns never if the component name is not of a finite string type", () => {
+    type Xxx1Component = Component<string, { getXxx: () => number }>;
     assertType<Equals<Instance<Xxx1Component>, never>>();
 
-    type Xxx2Component = Component<"xxx" | "yyy", { getXxx: () => number }>;
+    type Xxx2Component = Component<`x-${string}`, { getXxx: () => number }>;
     assertType<Equals<Instance<Xxx2Component>, never>>();
-
-    type Xxx3Component = Component<string, { getXxx: () => number }>;
-    assertType<Equals<Instance<Xxx3Component>, never>>();
-
-    type Xxx4Component = Component<`x-${string}`, { getXxx: () => number }>;
-    assertType<Equals<Instance<Xxx4Component>, never>>();
   });
 
   it("distributes over union members", () => {

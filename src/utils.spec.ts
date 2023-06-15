@@ -1,6 +1,6 @@
 import type { Equals } from "./__tests__/types";
 import { assertType } from "./__tests__/types";
-import type { Extend, IsFiniteString, IsSingleton, OrElse, Wrap } from "./utils";
+import type { Extend, IsFiniteString, OrElse, Wrap } from "./utils";
 
 describe("IsFiniteString", () => {
   it("returns true if and only if the type has a finite number of inhabitants", () => {
@@ -20,19 +20,6 @@ describe("IsFiniteString", () => {
     assertType<Equals<IsFiniteString<"foo" | `x-${number}`>, false>>();
     assertType<Equals<IsFiniteString<"foo" | `x-${bigint}`>, false>>();
     assertType<Equals<IsFiniteString<"foo" | `x-${boolean}`>, true>>();
-  });
-});
-
-describe("IsSingleton", () => {
-  it("returns true if and only if the type has only one union member", () => {
-    assertType<Equals<IsSingleton<never>, false>>();
-
-    assertType<Equals<IsSingleton<"foo">, true>>();
-    assertType<Equals<IsSingleton<"foo" | "bar">, false>>();
-
-    assertType<Equals<IsSingleton<string>, true>>();
-
-    assertType<Equals<IsSingleton<`x-${boolean}`>, false>>();
   });
 });
 
