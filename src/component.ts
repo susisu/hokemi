@@ -18,8 +18,8 @@ export type Instance<C extends AbstractComponent> = C extends Component<infer N,
 type _Instance<N extends string, T extends unknown> = IsFiniteString<N> extends true
   ? IsSingleton<N> extends true
     ? { readonly [N0 in N]: T }
-    : {}
-  : {};
+    : never
+  : never;
 
 export type Mixed<Cs extends AbstractComponent[]> = _Mixed<Cs, {}>;
 // prettier-ignore

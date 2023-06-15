@@ -8,18 +8,18 @@ describe("Instance", () => {
     assertType<Equals<Instance<FooComponent>, Readonly<{ foo: { getFoo: () => number } }>>>();
   });
 
-  it("returns an empty object type if the component name is not a singleton string", () => {
+  it("returns never if the component name is not a singleton string", () => {
     type Xxx1Component = Component<never, { getXxx: () => number }>;
-    assertType<Equals<Instance<Xxx1Component>, {}>>();
+    assertType<Equals<Instance<Xxx1Component>, never>>();
 
     type Xxx2Component = Component<"xxx" | "yyy", { getXxx: () => number }>;
-    assertType<Equals<Instance<Xxx2Component>, {}>>();
+    assertType<Equals<Instance<Xxx2Component>, never>>();
 
     type Xxx3Component = Component<string, { getXxx: () => number }>;
-    assertType<Equals<Instance<Xxx3Component>, {}>>();
+    assertType<Equals<Instance<Xxx3Component>, never>>();
 
     type Xxx4Component = Component<`x-${string}`, { getXxx: () => number }>;
-    assertType<Equals<Instance<Xxx4Component>, {}>>();
+    assertType<Equals<Instance<Xxx4Component>, never>>();
   });
 
   it("distributes over union members", () => {
