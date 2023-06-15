@@ -34,7 +34,7 @@ describe("Instance", () => {
   });
 });
 
-describe("MixedInstance", () => {
+describe("Mixed", () => {
   it("returns a mixed instance type of the components", () => {
     assertType<Equals<Mixed<[]>, {}>>();
 
