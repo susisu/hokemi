@@ -47,6 +47,8 @@ describe("ProviderName", () => {
   });
 
   it("distributes over union members", () => {
+    assertType<Equals<ProviderName<never>, never>>();
+
     type FooProvider = Provider<"foo", { getFoo: () => number }, { bar: { getBar: () => string } }>;
     type BarProvider = Provider<
       "bar",
@@ -64,6 +66,8 @@ describe("ProviderDependencies", () => {
   });
 
   it("returns the intersection of the dependencies of all the union members", () => {
+    assertType<Equals<ProviderDependencies<never>, unknown>>();
+
     type FooProvider = Provider<"foo", { getFoo: () => number }, { bar: { getBar: () => string } }>;
     type BarProvider = Provider<
       "bar",
@@ -88,6 +92,8 @@ describe("ReconstructComponent", () => {
   });
 
   it("distributes over union members", () => {
+    assertType<Equals<ReconstructComponent<never>, never>>();
+
     type FooProvider = Provider<"foo", { getFoo: () => number }, { bar: { getBar: () => string } }>;
     type BarProvider = Provider<"bar", { getBar: () => string }, {}>;
     assertType<
@@ -170,6 +176,8 @@ describe("Impl", () => {
   });
 
   it("distributes over union members", () => {
+    assertType<Equals<Impl<never, [BazComponent]>, never>>();
+
     type FooComponent = Component<"foo", { getFoo: () => number }>;
     type BarComponent = Component<"bar", { getBar: () => string }>;
     type BazComponent = Component<"baz", { getBaz: () => boolean }>;
@@ -206,6 +214,8 @@ describe("ImplArgs", () => {
   });
 
   it("distributes over union members", () => {
+    assertType<Equals<ImplArgs<never, [BazComponent]>, never>>();
+
     type FooComponent = Component<"foo", { getFoo: () => number }>;
     type BarComponent = Component<"bar", { getBar: () => string }>;
     type BazComponent = Component<"baz", { getBaz: () => boolean }>;

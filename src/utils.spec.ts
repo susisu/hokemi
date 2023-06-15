@@ -55,6 +55,8 @@ describe("Extend", () => {
   });
 
   it("distributes over union members", () => {
+    assertType<Equals<Extend<never, {}>, never>>();
+    assertType<Equals<Extend<{}, never>, never>>();
     assertType<
       Equals<
         Extend<
