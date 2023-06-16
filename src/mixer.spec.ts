@@ -35,7 +35,7 @@ describe("Mixer", () => {
           M["new"],
           | {
               [missingDependenciesError]: {
-                reason: "provider has missing dependencies";
+                reason: "some dependencies are missing";
                 providerName: "foo";
                 dependencies: [
                   {
@@ -47,7 +47,7 @@ describe("Mixer", () => {
             }
           | {
               [missingDependenciesError]: {
-                reason: "provider has missing dependencies";
+                reason: "some dependencies are missing";
                 providerName: "bar";
                 dependencies: [
                   {
@@ -76,7 +76,7 @@ describe("Mixer", () => {
           M["new"],
           {
             [incompatibleDependenciesError]: {
-              reason: "provider has incompatible dependencies";
+              reason: "some dependencies are incompatible";
               providerName: "foo";
               dependencies: [
                 {
@@ -102,7 +102,7 @@ describe("Mixer", () => {
           M1["new"],
           {
             [missingDependenciesError]: {
-              reason: "provider has missing dependencies";
+              reason: "some dependencies are missing";
               providerName: "foo";
               dependencies: [
                 {
@@ -132,7 +132,7 @@ describe("Mixer", () => {
           M1["new"],
           {
             [missingDependenciesError]: {
-              reason: "provider has missing dependencies";
+              reason: "some dependencies are missing";
               providerName: "foo";
               dependencies:
                 | [
@@ -170,7 +170,7 @@ describe("Mixer", () => {
           M1["new"],
           {
             [missingDependenciesError]: {
-              reason: "provider has missing dependencies";
+              reason: "some dependencies are missing";
               providerName: "foo";
               dependencies: [
                 | {
@@ -193,7 +193,7 @@ describe("Mixer", () => {
           M2["new"],
           {
             [missingDependenciesError]: {
-              reason: "provider has missing dependencies";
+              reason: "some dependencies are missing";
               providerName: "foo";
               dependencies: [
                 {
@@ -212,7 +212,7 @@ describe("Mixer", () => {
           M3["new"],
           {
             [missingDependenciesError]: {
-              reason: "provider has missing dependencies";
+              reason: "some dependencies are missing";
               providerName: "foo";
               dependencies: [
                 {

@@ -32,7 +32,7 @@ type PerProviderError<
   : OrElse<
       MissingDependenciesError<P, Ps> | IncompatibleDependenciesError<P, Ps>,
       UnknownError<{
-        reason: "provider has an unknown dependency error (this is likely a bug; please file an issue)";
+        reason: "unknown dependency error (this is likely a bug; please file an issue)";
         providerName: ProviderName<P>;
       }>
     >;
@@ -54,7 +54,7 @@ type MissingDependenciesError<
   ? never
   : {
       [missingDependenciesError]: {
-        reason: "provider has missing dependencies";
+        reason: "some dependencies are missing";
         providerName: ProviderName<P>;
         dependencies: MissingDependencies<P, Ps>;
       };
@@ -86,7 +86,7 @@ type IncompatibleDependenciesError<
   ? never
   : {
       [incompatibleDependenciesError]: {
-        reason: "provider has incompatible dependencies";
+        reason: "some dependencies are incompatible";
         providerName: ProviderName<P>;
         dependencies: IncompatibleDependencies<P, Ps>;
       };

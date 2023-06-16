@@ -79,7 +79,7 @@ If you forget to provide some dependencies, or provide mismatched dependencies, 
 const app = mixer(clockImpl, myServiceImpl).new();
 //                                          ~~~
 // TS2349: This expression is not callable.
-//   Type '{ [missingDependenciesError]: { reason: "provider has missing dependencies"; providerName: "myService"; dependencies: [{ name: "random"; expectedType: Random; }]; }; }' has no call signatures.
+//   Type '{ [missingDependenciesError]: { reason: "some dependencies are missing"; providerName: "myService"; dependencies: [{ name: "random"; expectedType: Random; }]; }; }' has no call signatures.
 ```
 
 ### API
