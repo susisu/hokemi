@@ -1,8 +1,5 @@
 import type { Extend, IsFiniteString } from "./utils";
 
-// const componentType = Symbol("hokemi.type.Component");
-declare const componentType: unique symbol;
-
 /**
  * `Component<N, T>` represents a component.
  * @param N The name of the component.
@@ -10,7 +7,7 @@ declare const componentType: unique symbol;
  */
 export type Component<N extends string, T extends unknown> = {
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  __type: typeof componentType;
+  __type: "hokemi.type.Component";
   name: N;
   type: T;
 };

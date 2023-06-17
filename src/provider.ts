@@ -1,7 +1,5 @@
 import type { AbstractComponent, Component, Mixed } from "./component";
 
-const providerType = Symbol("hokemi.type.Provider");
-
 /**
  * `Provider<N, T, D>` represents a component provider.
  * @param N The name of the component.
@@ -10,7 +8,7 @@ const providerType = Symbol("hokemi.type.Provider");
  */
 export type Provider<N extends string, T extends unknown, D extends unknown> = Readonly<{
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  __type: typeof providerType;
+  __type: "hokemi.type.Provider";
   name: N;
   factory: Factory<T, D>;
 }>;
@@ -91,7 +89,7 @@ export function impl<C extends AbstractComponent, Ds extends AbstractComponent[]
 ): Impl<C, Ds> {
   const provider: AbstractProvider = {
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    __type: providerType,
+    __type: "hokemi.type.Provider",
     name,
     factory,
   };
