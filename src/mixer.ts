@@ -7,8 +7,21 @@ import type {
 import { execFactory } from "./provider";
 import type { OrElse, Wrap } from "./utils";
 
+/**
+ * `Mixer<Ps>` represents a mixer object.
+ * @param Ps A list of providers to be mixed.
+ */
 export type Mixer<Ps extends AbstractProvider[]> = Readonly<{
+  /**
+   * Extends the mixer with more providers.
+   * @params providers Additional providers to be mixed.
+   * @returns An extended mixer object.
+   */
   with: MixerMethodWith<Ps>;
+  /**
+   * Creates a new mixed instance.
+   * @returns A mixed instance.
+   */
   new: MixerMethodNew<Ps>;
 }>;
 
@@ -109,6 +122,11 @@ type _IncompatibleDependencies<D extends unknown, I extends unknown> = D extends
     >
   : never;
 
+/**
+ * Creates a new mixer object.
+ * @param providers Providers to be mixed.
+ * @returns A mixer object.
+ */
 export function mixer<Ps extends AbstractProvider[]>(...providers: Ps): Mixer<Ps> {
   return {
     with: (...otherProviders) => mixer(...providers, ...otherProviders),

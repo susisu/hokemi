@@ -2,6 +2,12 @@ import type { AbstractComponent, Component, Mixed } from "./component";
 
 const providerType = Symbol("hokemi.type.Provider");
 
+/**
+ * `Provider<N, T, D>` represents a component provider.
+ * @param N The name of the component.
+ * @param T The type of the provided instance.
+ * @param D The type of the dependencies.
+ */
 export type Provider<N extends string, T extends unknown, D extends unknown> = Readonly<{
   // eslint-disable-next-line @typescript-eslint/naming-convention
   __type: typeof providerType;
@@ -30,6 +36,9 @@ export function execFactory<T extends unknown, D extends unknown>(
   }
 }
 
+/**
+ * The upper bound of provider types.
+ */
 export type AbstractProvider = Provider<string, unknown, never>;
 
 export type ProviderName<P extends AbstractProvider> = P extends Provider<infer N, unknown, never>
@@ -54,6 +63,11 @@ export type MixedProvidedInstance<Ps extends AbstractProvider[]> = Mixed<{
   [K in keyof Ps]: ReconstructComponent<Ps[K]>;
 }>;
 
+/**
+ * Returns the provider type that implements a component.
+ * @param C A component.
+ * @param Ds A list of dependencies.
+ */
 export type Impl<
   C extends AbstractComponent,
   Ds extends AbstractComponent[] = []
@@ -66,6 +80,12 @@ type _ImplArgs<P extends AbstractProvider> = P extends Provider<infer N, infer T
   ? [name: N, factory: Factory<T, D>]
   : never;
 
+/**
+ * Creates an implementation of a component.
+ * @param name The name of the component.
+ * @param factory A factory function or class that creates an instance of the component.
+ * @returns An implementation (provider) of the component.
+ */
 export function impl<C extends AbstractComponent, Ds extends AbstractComponent[] = []>(
   ...[name, factory]: ImplArgs<C, Ds>
 ): Impl<C, Ds> {
