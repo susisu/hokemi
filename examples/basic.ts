@@ -3,20 +3,20 @@ import { impl, mixer } from "@susisu/hokemi";
 
 // 1. Declare components
 
-export type ClockComponent = Component<"clock", Clock>;
 export type Clock = {
   getTime: () => number;
 };
+export type ClockComponent = Component<"clock", Clock>;
 
-export type RandomComponent = Component<"random", Random>;
 export type Random = {
   getRandom: () => number;
 };
+export type RandomComponent = Component<"random", Random>;
 
-export type MyServiceComponent = Component<"myService", MyService>;
 export type MyService = {
   getTimeAndRandom: () => [number, number];
 };
+export type MyServiceComponent = Component<"myService", MyService>;
 
 // 2. Implement components
 
@@ -37,5 +37,5 @@ export const myServiceImpl = impl<MyServiceComponent, [ClockComponent, RandomCom
 
 // 3. Mix implementations and create an instance
 
-const app = mixer(clockImpl, randomImpl, myServiceImpl).new();
+const app = mixer(myServiceImpl, clockImpl, randomImpl).new();
 console.log(app.myService.getTimeAndRandom());

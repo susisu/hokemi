@@ -19,20 +19,20 @@ First, declare *components* of your application.
 ``` ts
 import type { Component } from "@susisu/hokemi";
 
-export type ClockComponent = Component<"clock", Clock>;
 export type Clock = {
   getTime: () => number;
 };
+export type ClockComponent = Component<"clock", Clock>;
 
-export type RandomComponent = Component<"random", Random>;
 export type Random = {
   getRandom: () => number;
 };
+export type RandomComponent = Component<"random", Random>;
 
-export type MyServiceComponent = Component<"myService", MyService>;
 export type MyService = {
   getTimeAndRandom: () => [number, number];
 };
+export type MyServiceComponent = Component<"myService", MyService>;
 ```
 
 Each component has a name (e.g. `"clock"` for `ClockComponent`), which is used later to reference its instance.
@@ -67,7 +67,7 @@ Finally, *mix* your implementations and create an instance of the application.
 ``` ts
 import { mixer } from "@susisu/hokemi";
 
-const app = mixer(clockImpl, randomImpl, myServiceImpl).new();
+const app = mixer(myServiceImpl, clockImpl, randomImpl).new();
 console.log(app.myService.getTimeAndRandom()); // => [<time>, <random>]
 ```
 
@@ -76,7 +76,7 @@ You can reference each component instance by its name (e.g. `app.myService`).
 If you forget to provide some dependencies, or provide mismatched dependencies, it will be detected at compile time with neat error messages.
 
 ``` ts
-const app = mixer(clockImpl, myServiceImpl).new();
+const app = mixer(myServiceImpl, clockImpl).new();
 //                                          ~~~
 // TS2349: This expression is not callable.
 //   Type '{ [missingDependenciesError]: { reason: "some dependencies are missing"; providerName: "myService"; dependencies: [{ name: "random"; expectedType: Random; }]; }; }' has no call signatures.
