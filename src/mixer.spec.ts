@@ -1,13 +1,15 @@
 import type { Equals } from "./__tests__/types";
 import { assertType } from "./__tests__/types";
 import type { Component, Mixed } from "./component";
-import type { Mixer, incompatibleDependenciesError, missingDependenciesError } from "./mixer";
+import type { Mixer } from "./mixer";
 import { mixer } from "./mixer";
 import type { Impl } from "./provider";
 import { impl } from "./provider";
 
 describe("Mixer", () => {
   describe("new", () => {
+    /* eslint-disable @typescript-eslint/naming-convention */
+
     type Foo = { getFoo: () => number };
     type Bar = { getBar: () => string };
     type Baz = { getBaz: () => boolean };
@@ -34,7 +36,7 @@ describe("Mixer", () => {
         Equals<
           M["new"],
           | {
-              [missingDependenciesError]: {
+              __missingDependenciesError?: {
                 reason: "some dependencies are missing";
                 providerName: "foo";
                 dependencies: [
@@ -46,7 +48,7 @@ describe("Mixer", () => {
               };
             }
           | {
-              [missingDependenciesError]: {
+              __missingDependenciesError?: {
                 reason: "some dependencies are missing";
                 providerName: "bar";
                 dependencies: [
@@ -75,7 +77,7 @@ describe("Mixer", () => {
         Equals<
           M["new"],
           {
-            [incompatibleDependenciesError]: {
+            __incompatibleDependenciesError?: {
               reason: "some dependencies are incompatible";
               providerName: "foo";
               dependencies: [
@@ -101,7 +103,7 @@ describe("Mixer", () => {
         Equals<
           M1["new"],
           {
-            [missingDependenciesError]: {
+            __missingDependenciesError?: {
               reason: "some dependencies are missing";
               providerName: "foo";
               dependencies: [
@@ -131,7 +133,7 @@ describe("Mixer", () => {
         Equals<
           M1["new"],
           {
-            [missingDependenciesError]: {
+            __missingDependenciesError?: {
               reason: "some dependencies are missing";
               providerName: "foo";
               dependencies:
@@ -169,7 +171,7 @@ describe("Mixer", () => {
         Equals<
           M1["new"],
           {
-            [missingDependenciesError]: {
+            __missingDependenciesError?: {
               reason: "some dependencies are missing";
               providerName: "foo";
               dependencies: [
@@ -192,7 +194,7 @@ describe("Mixer", () => {
         Equals<
           M2["new"],
           {
-            [missingDependenciesError]: {
+            __missingDependenciesError?: {
               reason: "some dependencies are missing";
               providerName: "foo";
               dependencies: [
@@ -211,7 +213,7 @@ describe("Mixer", () => {
         Equals<
           M3["new"],
           {
-            [missingDependenciesError]: {
+            __missingDependenciesError?: {
               reason: "some dependencies are missing";
               providerName: "foo";
               dependencies: [
@@ -228,6 +230,8 @@ describe("Mixer", () => {
       type M4 = Mixer<[FooImpl, BarImpl, BazImpl]>;
       assertType<Equals<M4["new"], () => Mixed<[FooComponent, BarComponent, BazComponent]>>>();
     });
+
+    /* eslint-enable @typescript-eslint/naming-convention */
   });
 });
 

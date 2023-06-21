@@ -50,15 +50,10 @@ type PerProviderError<
       }>
     >;
 
-// export const unknownError = Symbol("hokemi.error.Unknown");
-export declare const unknownError: unique symbol;
-
 type UnknownError<E extends unknown> = {
-  [unknownError]: E;
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  __unknownError?: E;
 };
-
-// export const missingDependenciesError = Symbol("hokemi.error.MissingDependencies");
-export declare const missingDependenciesError: unique symbol;
 
 type MissingDependenciesError<
   P extends AbstractProvider,
@@ -66,7 +61,8 @@ type MissingDependenciesError<
 > = MissingDependencies<P, Ps> extends never
   ? never
   : {
-      [missingDependenciesError]: {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      __missingDependenciesError?: {
         reason: "some dependencies are missing";
         providerName: ProviderName<P>;
         dependencies: MissingDependencies<P, Ps>;
@@ -89,16 +85,14 @@ type _MissingDependencies<D extends unknown, I extends unknown> = D extends unkn
     >
   : never;
 
-// export const incompatibleDependenciesError = Symbol("hokemi.error.IncompatibleDependencies");
-export declare const incompatibleDependenciesError: unique symbol;
-
 type IncompatibleDependenciesError<
   P extends AbstractProvider,
   Ps extends AbstractProvider[]
 > = IncompatibleDependencies<P, Ps> extends never
   ? never
   : {
-      [incompatibleDependenciesError]: {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      __incompatibleDependenciesError?: {
         reason: "some dependencies are incompatible";
         providerName: ProviderName<P>;
         dependencies: IncompatibleDependencies<P, Ps>;
