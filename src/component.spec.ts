@@ -21,12 +21,22 @@ describe("Instance", () => {
     >();
   });
 
-  it("returns never if the component name is not of a finite string type", () => {
-    type Xxx1Component = Component<string, { getXxx: () => number }>;
-    assertType<Equals<Instance<Xxx1Component>, never>>();
+  it("returns an object type with an optional index signature if the component name is not of a finite string type", () => {
+    type XxxComponent = Component<string, { getXxx: () => number }>;
+    assertType<
+      Equals<
+        Instance<XxxComponent>,
+        Readonly<{ [key: string]: { getXxx: () => number } | undefined }>
+      >
+    >();
 
-    type Xxx2Component = Component<`x-${string}`, { getXxx: () => number }>;
-    assertType<Equals<Instance<Xxx2Component>, never>>();
+    type YyyComponent = Component<`x-${string}`, { getYyy: () => number }>;
+    assertType<
+      Equals<
+        Instance<YyyComponent>,
+        Readonly<{ [key: `x-${string}`]: { getYyy: () => number } | undefined }>
+      >
+    >();
   });
 
   it("distributes over union members", () => {
@@ -60,7 +70,12 @@ describe("Mixed", () => {
         }>
       >
     >();
+  });
 
+  it("overrides previously declared component instances", () => {
+    type FooComponent = Component<"foo", { getFoo: () => number }>;
+    type BarComponent = Component<"bar", { getBar: () => string }>;
+    type BazComponent = Component<"baz", { getBaz: () => boolean }>;
     type Bar2Component = Component<"bar", { getBar2: () => bigint }>;
     assertType<
       Equals<
@@ -69,6 +84,24 @@ describe("Mixed", () => {
           foo: { getFoo: () => number };
           bar: { getBar2: () => bigint };
           baz: { getBaz: () => boolean };
+        }>
+      >
+    >();
+  });
+
+  it("erases all matching component instances before a component with an infinite name", () => {
+    type FooComponent = Component<"foo", { getFoo: () => number }>;
+    type BarComponent = Component<"bar", { getBar: () => string }>;
+    type BazComponent = Component<"x-baz", { getBaz: () => boolean }>;
+    type QuxComponent = Component<"qux", { getQux: () => bigint }>;
+    type XxxComponent = Component<string, { getXxx: () => number }>;
+    type YyyComponent = Component<`x-${string}`, { getYyy: () => number }>;
+    assertType<
+      Equals<
+        Mixed<[FooComponent, XxxComponent, BarComponent, BazComponent, YyyComponent, QuxComponent]>,
+        Readonly<{
+          bar: { getBar: () => string };
+          qux: { getQux: () => bigint };
         }>
       >
     >();

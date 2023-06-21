@@ -11,7 +11,7 @@ import type {
   ProviderName,
   ReconstructComponent,
 } from "./provider";
-import { impl, execFactory } from "./provider";
+import { execFactory, impl } from "./provider";
 
 describe("execFactory", () => {
   it("calls the factory if it is a function", () => {

@@ -1,6 +1,6 @@
 import type { Equals } from "./__tests__/types";
 import { assertType } from "./__tests__/types";
-import type { Prod, Merge, IsFiniteString, OrElse, Wrap } from "./utils";
+import type { AsString, IsFiniteString, Merge, OrElse, Prod, Wrap } from "./utils";
 
 describe("IsFiniteString", () => {
   it("returns true if and only if the type has a finite number of inhabitants", () => {
@@ -20,6 +20,14 @@ describe("IsFiniteString", () => {
     assertType<Equals<IsFiniteString<"foo" | `x-${number}`>, false>>();
     assertType<Equals<IsFiniteString<"foo" | `x-${bigint}`>, false>>();
     assertType<Equals<IsFiniteString<"foo" | `x-${boolean}`>, true>>();
+  });
+});
+
+describe("AsString", () => {
+  it("removes non-string components of a type", () => {
+    assertType<Equals<AsString<never>, never>>();
+    assertType<Equals<AsString<string | number>, string>>();
+    assertType<Equals<AsString<"foo" | "bar" | 42>, "foo" | "bar">>();
   });
 });
 

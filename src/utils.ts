@@ -11,6 +11,8 @@ type _IsFiniteString<S extends string> =
   )
   : never;
 
+export type AsString<T> = T extends string ? T : never;
+
 export type Prod<Xs extends unknown[]> = Xs extends unknown
   ? { [K in keyof Xs]: (x: Xs[K]) => unknown }[number] extends (x: infer P) => unknown
     ? P
