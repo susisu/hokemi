@@ -11,10 +11,13 @@ type _IsFiniteString<S extends string> =
   )
   : never;
 
-export type Extend<A extends {}, B extends {}> = B extends unknown
-  ? Merge<{ [K in keyof A as K extends keyof B ? never : K]: A[K] } & B>
+export type Prod<Xs extends unknown[]> = Xs extends unknown
+  ? { [K in keyof Xs]: (x: Xs[K]) => unknown }[number] extends (x: infer P) => unknown
+    ? P
+    : never
   : never;
-type Merge<T> = { [K in keyof T]: T[K] };
+
+export type Merge<T> = { [K in keyof T]: T[K] };
 
 export type OrElse<T, E> = [T] extends [never] ? E : T;
 

@@ -1,4 +1,4 @@
-import type { Extend, IsFiniteString } from "./utils";
+import type { IsFiniteString, Merge, Prod } from "./utils";
 
 /**
  * `Component<N, T>` represents a component.
@@ -34,12 +34,25 @@ type _Instance<N extends string, T extends unknown> = IsFiniteString<N> extends 
  * Returns the mixed instance type of components.
  * @param Cs Components.
  */
-export type Mixed<Cs extends AbstractComponent[]> = _Mixed<Cs, {}>;
+export type Mixed<Cs extends AbstractComponent[]> = Merge<Prod<FilteredInstances<Cs, [], never>>>;
 // prettier-ignore
-type _Mixed<Cs extends AbstractComponent[], M extends {}> =
-    Cs extends [] ? M
+type FilteredInstances<
+  Cs extends AbstractComponent[],
+  Is extends Array<{}>,
+  K extends unknown
+> = Cs extends [] ? Is
   : Cs extends [
+      ...infer Xs extends AbstractComponent[],
       infer X extends AbstractComponent,
-      ...infer Xs extends AbstractComponent[]
-    ] ? _Mixed<Xs, Extend<M, Instance<X>>>
+    ] ? _FilteredInstances<Xs, Is, Instance<X>, K>
+  : never
+type _FilteredInstances<
+  Cs extends AbstractComponent[],
+  Is extends Array<{}>,
+  I extends {},
+  K extends unknown
+> = I extends unknown
+  ? keyof I extends K
+    ? FilteredInstances<Cs, [...Is], K>
+    : FilteredInstances<Cs, [I, ...Is], K | keyof I>
   : never;

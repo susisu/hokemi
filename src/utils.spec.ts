@@ -1,6 +1,6 @@
 import type { Equals } from "./__tests__/types";
 import { assertType } from "./__tests__/types";
-import type { Extend, IsFiniteString, OrElse, Wrap } from "./utils";
+import type { Prod, Merge, IsFiniteString, OrElse, Wrap } from "./utils";
 
 describe("IsFiniteString", () => {
   it("returns true if and only if the type has a finite number of inhabitants", () => {
@@ -23,43 +23,53 @@ describe("IsFiniteString", () => {
   });
 });
 
-describe("Extend", () => {
-  it("returns a merged object type of the two object types; common members are overrided by the latter", () => {
-    assertType<Equals<Extend<{}, {}>, {}>>();
-    assertType<Equals<Extend<{ foo: "foo" }, { bar: "bar" }>, { foo: "foo"; bar: "bar" }>>();
+describe("Prod", () => {
+  it("returns the product type of the given tuple type", () => {
+    assertType<Equals<Prod<[]>, unknown>>();
+    assertType<Equals<Prod<[{ foo: "foo" }, { bar: "bar" }]>, { foo: "foo" } & { bar: "bar" }>>();
     assertType<
       Equals<
-        Extend<{ foo: "foo"; xxx: "xxx-1" }, { bar: "bar"; xxx: "xxx-2" }>,
-        { foo: "foo"; bar: "bar"; xxx: "xxx-2" }
+        Prod<[{ foo: "foo" } | { bar: "bar" }, { baz: "baz" }]>,
+        ({ foo: "foo" } | { bar: "bar" }) & { baz: "baz" }
       >
     >();
-  });
-
-  it("keeps the original property modifiers", () => {
     assertType<
-      Equals<Extend<{ readonly foo: "foo" }, { bar?: "bar" }>, { readonly foo: "foo"; bar?: "bar" }>
+      Equals<
+        Prod<[{ foo: "foo" }, { bar: "bar" } | { baz: "baz" }]>,
+        { foo: "foo" } & ({ bar: "bar" } | { baz: "baz" })
+      >
     >();
   });
 
   it("distributes over union members", () => {
-    assertType<Equals<Extend<never, {}>, never>>();
-    assertType<Equals<Extend<{}, never>, never>>();
+    assertType<Equals<Prod<never>, never>>();
     assertType<
       Equals<
-        Extend<
-          { foo: "foo"; xxx: "xxx-1" } | { bar: "bar"; xxx: "xxx-2" },
-          { baz: "baz"; xxx: "xxx-3" }
-        >,
-        { foo: "foo"; baz: "baz"; xxx: "xxx-3" } | { bar: "bar"; baz: "baz"; xxx: "xxx-3" }
+        Prod<[{ foo: "foo" }, { bar: "bar" }] | [{ baz: "baz" }, { qux: "qux" }]>,
+        ({ foo: "foo" } & { bar: "bar" }) | ({ baz: "baz" } & { qux: "qux" })
       >
     >();
+  });
+});
+
+describe("Merge", () => {
+  it("merges an intersection type into a sinlge type", () => {
+    assertType<Equals<Merge<{}>, {}>>();
+    assertType<Equals<Merge<{ foo: "foo" } & { bar: "bar" }>, { foo: "foo"; bar: "bar" }>>();
+  });
+
+  it("keeps the original property modifiers", () => {
+    assertType<
+      Equals<Merge<{ readonly foo: "foo" } & { bar?: "bar" }>, { readonly foo: "foo"; bar?: "bar" }>
+    >();
+  });
+
+  it("distributes over union members", () => {
+    assertType<Equals<Merge<never>, never>>();
     assertType<
       Equals<
-        Extend<
-          { foo: "foo"; xxx: "xxx-1" },
-          { bar: "bar"; xxx: "xxx-2" } | { baz: "baz"; xxx: "xxx-3" }
-        >,
-        { foo: "foo"; bar: "bar"; xxx: "xxx-2" } | { foo: "foo"; baz: "baz"; xxx: "xxx-3" }
+        Merge<({ foo: "foo" } & { bar: "bar" }) | ({ baz: "baz" } & { qux: "qux" })>,
+        { foo: "foo"; bar: "bar" } | { baz: "baz"; qux: "qux" }
       >
     >();
   });
