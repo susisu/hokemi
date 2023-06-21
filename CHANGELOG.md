@@ -1,3 +1,9 @@
+## 0.1.1 (2023-06-21)
+
+- Increase maximum number of mixable components (it was too low!)
+- Allow mixer instances to be exported
+- Fix handling of ambiguously named components
+
 ## 0.1.0 (2023-06-17)
 
 - First release
