@@ -107,6 +107,14 @@ describe("Mixed", () => {
     >();
   });
 
+  it("returns an empty object type if the input is not a tuple", () => {
+    type FooComponent = Component<"foo", { getFoo: () => number }>;
+    type BarComponent = Component<"bar", { getBar: () => string }>;
+    assertType<Equals<Mixed<FooComponent[]>, {}>>();
+    assertType<Equals<Mixed<[...FooComponent[], BarComponent]>, {}>>();
+    assertType<Equals<Mixed<[FooComponent, ...BarComponent[]]>, {}>>();
+  });
+
   it("distibutes over union members", () => {
     type FooComponent = Component<"foo", { getFoo: () => number }>;
     type BarComponent = Component<"bar", { getBar: () => string }>;

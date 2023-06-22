@@ -45,7 +45,7 @@ type FilteredInstances<
       ...infer Xs extends AbstractComponent[],
       infer X extends AbstractComponent,
     ] ? _FilteredInstances<Xs, Is, Instance<X>, K>
-  : never
+  : [];
 // prettier-ignore
 type _FilteredInstances<
   Cs extends AbstractComponent[],
