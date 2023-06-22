@@ -1,3 +1,7 @@
+## 0.1.2 (2023-06-22)
+
+- Fix handling non-tuple input for `mixer()`
+
 ## 0.1.1 (2023-06-21)
 
 - Increase maximum number of mixable components (it was too low!)
