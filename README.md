@@ -101,6 +101,21 @@ Creates a *mixer* object, which has the following methods:
 - `.with(...implementations)`: extends the mixer with more implementations.
 - `.new()`: creates a mixed instance.
 
+## Troubleshooting
+
+### Cannot export a mixer (TS7056) / type inference for a mixer is too slow
+
+Adding a type annotation will solve the problem.
+
+``` typescript
+import { Mixer, mixer } from "@susisu/hokemi";
+
+// Don't forget `as const`!
+const impls = [myServiceImpl, clockImpl, randomImpl] as const;
+
+export const myMixer: Mixer<[...typeof impls]> = mixer(...impls);
+```
+
 ## License
 
 [MIT License](http://opensource.org/licenses/mit-license.php)
