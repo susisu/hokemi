@@ -19,11 +19,11 @@ export type Factory<T extends unknown, D extends unknown> =
 export type FactoryFunction<T extends unknown, D extends unknown> = (deps: D) => T;
 export type FactoryClass<T extends unknown, D extends unknown> = new (deps: D) => T;
 
-export function execFactory<T extends unknown, D extends unknown>(
+export function invokecFactory<T extends unknown, D extends unknown>(
   factory: Factory<T, D>,
   deps: D
 ): T {
-  // check if the factory is a class (this is not a perfect check though)
+  // check if the factory is a class (not a perfect check though)
   const desc = Object.getOwnPropertyDescriptor(factory, "prototype");
   if (desc && !desc.writable) {
     // eslint-disable-next-line @susisu/safe-typescript/no-type-assertion

@@ -11,18 +11,18 @@ import type {
   ProviderName,
   ReconstructComponent,
 } from "./provider";
-import { execFactory, impl } from "./provider";
+import { invokecFactory, impl } from "./provider";
 
-describe("execFactory", () => {
-  it("calls the factory if it is a function", () => {
+describe("invokecFactory", () => {
+  it("calls the argument if it is a function", () => {
     type Foo = { getFoo: () => number };
     const factory = (foo: number): Foo => ({ getFoo: () => foo });
-    const value = execFactory(factory, 42);
+    const value = invokecFactory(factory, 42);
     assertType<Equals<typeof value, Foo>>();
     expect(value.getFoo()).toBe(42);
   });
 
-  it("constructs an instance of the factory if it is a class", () => {
+  it("calls the constructor of the argument if it is a class", () => {
     const factory = class Foo {
       private foo: number;
 
@@ -34,7 +34,7 @@ describe("execFactory", () => {
         return this.foo;
       }
     };
-    const value = execFactory(factory, 42);
+    const value = invokecFactory(factory, 42);
     assertType<Equals<typeof value, InstanceType<typeof factory>>>();
     expect(value.getFoo()).toBe(42);
   });
@@ -239,7 +239,7 @@ describe("impl", () => {
     }));
     assertType<Equals<typeof foo, Impl<FooComponent, [BarComponent]>>>();
     expect(foo.name).toBe("foo");
-    const value = execFactory(foo.factory, {
+    const value = invokecFactory(foo.factory, {
       bar: {
         getBar: () => "Hello",
       },
