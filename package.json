@@ -27,7 +27,6 @@
     "clean:rm": "rimraf lib",
     "prepublishOnly": "run-s clean lint test build"
   },
-  "packageManager": "yarn@3.5.1",
   "devDependencies": {
     "@susisu/eslint-config": "^0.0.65",
     "@types/jest": "^29.5.3",
