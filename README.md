@@ -7,9 +7,12 @@ Minimal type-safe dependency injection framework for TypeScript, inspired by Cak
 ## Installation
 
 ``` shell
+# npm
 npm i --save @susisu/hokemi
-# or
+# yarn
 yarn add @susisu/hokemi
+# pnpm
+pnpm add @susisu/hokemi
 ```
 
 ## Usage
@@ -79,7 +82,7 @@ If you forget to provide some dependencies, or provide mismatched dependencies, 
 const app = mixer(myServiceImpl, clockImpl).new();
 //                                          ~~~
 // TS2349: This expression is not callable.
-//   Type '{ [missingDependenciesError]: { reason: "some dependencies are missing"; providerName: "myService"; dependencies: [{ name: "random"; expectedType: Random; }]; }; }' has no call signatures.
+//   Type '{ __missingDependenciesError?: { reason: "some dependencies are missing"; providerName: "myService"; dependencies: [{ name: "random"; expectedType: Random; }]; } | undefined; }' has no call signatures.
 ```
 
 ### API
