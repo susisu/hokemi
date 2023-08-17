@@ -1,3 +1,8 @@
+## 0.1.3 (2023-08-17)
+
+- nit: Update documentation
+- Refactoring and chores
+
 ## 0.1.2 (2023-06-22)
 
 - Fix handling non-tuple input for `mixer()`

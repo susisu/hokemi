@@ -1,6 +1,6 @@
 {
   "name": "@susisu/hokemi",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Minimal type-safe dependency injection framework for TypeScript",
   "repository": "https://github.com/susisu/hokemi.git",
   "author": "Susisu <susisu2413@yahoo.co.jp>",
