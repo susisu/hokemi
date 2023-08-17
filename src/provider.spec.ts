@@ -207,7 +207,7 @@ describe("ImplArgs", () => {
               bar: { getBar: () => string };
               baz: { getBaz: () => boolean };
             }>
-          >
+          >,
         ]
       >
     >();

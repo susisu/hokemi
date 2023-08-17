@@ -68,7 +68,7 @@ export type MixedProvidedInstance<Ps extends AbstractProvider[]> = Mixed<{
  */
 export type Impl<
   C extends AbstractComponent,
-  Ds extends AbstractComponent[] = []
+  Ds extends AbstractComponent[] = [],
 > = C extends Component<infer N, infer T> ? Provider<N, T, Mixed<Ds>> : never;
 
 export type ImplArgs<C extends AbstractComponent, Ds extends AbstractComponent[] = []> = _ImplArgs<

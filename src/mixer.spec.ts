@@ -43,7 +43,7 @@ describe("Mixer", () => {
                   {
                     name: "baz";
                     expectedType: Baz;
-                  }
+                  },
                 ];
               };
             }
@@ -55,7 +55,7 @@ describe("Mixer", () => {
                   {
                     name: "baz";
                     expectedType: Baz;
-                  }
+                  },
                 ];
               };
             }
@@ -85,7 +85,7 @@ describe("Mixer", () => {
                   name: "bar";
                   expectedType: Bar;
                   actualType: Bar2;
-                }
+                },
               ];
             };
           }
@@ -110,7 +110,7 @@ describe("Mixer", () => {
                 {
                   name: "bar";
                   expectedType: Bar;
-                }
+                },
               ];
             };
           }
@@ -141,13 +141,13 @@ describe("Mixer", () => {
                     {
                       name: "bar";
                       expectedType: Bar;
-                    }
+                    },
                   ]
                 | [
                     {
                       name: "baz";
                       expectedType: Baz;
-                    }
+                    },
                   ];
             };
           }
@@ -182,7 +182,7 @@ describe("Mixer", () => {
                 | {
                     name: "baz";
                     expectedType: Baz;
-                  }
+                  },
               ];
             };
           }
@@ -201,7 +201,7 @@ describe("Mixer", () => {
                 {
                   name: "baz";
                   expectedType: Baz;
-                }
+                },
               ];
             };
           }
@@ -220,7 +220,7 @@ describe("Mixer", () => {
                 {
                   name: "bar";
                   expectedType: Bar;
-                }
+                },
               ];
             };
           }

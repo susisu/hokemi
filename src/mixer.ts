@@ -39,7 +39,7 @@ type MixerError<Ps extends AbstractProvider[]> = {
 
 type PerProviderError<
   P extends AbstractProvider,
-  Ps extends AbstractProvider[]
+  Ps extends AbstractProvider[],
 > = MixedProvidedInstance<Ps> extends ProviderDependencies<P>
   ? never
   : OrElse<
@@ -57,7 +57,7 @@ type UnknownError<E extends unknown> = {
 
 type MissingDependenciesError<
   P extends AbstractProvider,
-  Ps extends AbstractProvider[]
+  Ps extends AbstractProvider[],
 > = MissingDependencies<P, Ps> extends never
   ? never
   : {
@@ -70,7 +70,7 @@ type MissingDependenciesError<
     };
 type MissingDependencies<
   P extends AbstractProvider,
-  Ps extends AbstractProvider[]
+  Ps extends AbstractProvider[],
 > = _MissingDependencies<ProviderDependencies<P>, MixedProvidedInstance<Ps>>;
 type _MissingDependencies<D extends unknown, I extends unknown> = D extends unknown
   ? Wrap<
@@ -87,7 +87,7 @@ type _MissingDependencies<D extends unknown, I extends unknown> = D extends unkn
 
 type IncompatibleDependenciesError<
   P extends AbstractProvider,
-  Ps extends AbstractProvider[]
+  Ps extends AbstractProvider[],
 > = IncompatibleDependencies<P, Ps> extends never
   ? never
   : {
@@ -100,7 +100,7 @@ type IncompatibleDependenciesError<
     };
 type IncompatibleDependencies<
   P extends AbstractProvider,
-  Ps extends AbstractProvider[]
+  Ps extends AbstractProvider[],
 > = _IncompatibleDependencies<ProviderDependencies<P>, MixedProvidedInstance<Ps>>;
 type _IncompatibleDependencies<D extends unknown, I extends unknown> = D extends unknown
   ? Wrap<
