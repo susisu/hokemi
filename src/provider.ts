@@ -19,7 +19,7 @@ export type Factory<T extends unknown, D extends unknown> =
 export type FactoryFunction<T extends unknown, D extends unknown> = (deps: D) => T;
 export type FactoryClass<T extends unknown, D extends unknown> = new (deps: D) => T;
 
-export function invokecFactory<T extends unknown, D extends unknown>(
+export function invokeFactory<T extends unknown, D extends unknown>(
   factory: Factory<T, D>,
   deps: D
 ): T {
