@@ -39,23 +39,18 @@ export function invokeFactory<T extends unknown, D extends unknown>(
  */
 export type AbstractProvider = Provider<string, unknown, never>;
 
-export type ProviderName<P extends AbstractProvider> = P extends Provider<infer N, unknown, never>
-  ? N
+export type ProviderName<P extends AbstractProvider> =
+  P extends Provider<infer N, unknown, never> ? N : never;
+
+export type ProviderDependencies<P extends AbstractProvider> =
+  (P extends Provider<string, unknown, infer D> ? (deps: D) => unknown : never) extends (
+    (deps: infer I) => unknown
+  ) ?
+    I
   : never;
 
-export type ProviderDependencies<P extends AbstractProvider> = (
-  P extends Provider<string, unknown, infer D> ? (deps: D) => unknown : never
-) extends (deps: infer I) => unknown
-  ? I
-  : never;
-
-export type ReconstructComponent<P extends AbstractProvider> = P extends Provider<
-  infer N,
-  infer T,
-  never
->
-  ? Component<N, T>
-  : never;
+export type ReconstructComponent<P extends AbstractProvider> =
+  P extends Provider<infer N, infer T, never> ? Component<N, T> : never;
 
 export type MixedProvidedInstance<Ps extends AbstractProvider[]> = Mixed<{
   [K in keyof Ps]: ReconstructComponent<Ps[K]>;
@@ -66,17 +61,17 @@ export type MixedProvidedInstance<Ps extends AbstractProvider[]> = Mixed<{
  * @param C A component.
  * @param Ds A list of dependencies.
  */
-export type Impl<
-  C extends AbstractComponent,
-  Ds extends AbstractComponent[] = [],
-> = C extends Component<infer N, infer T> ? Provider<N, T, Mixed<Ds>> : never;
+export type Impl<C extends AbstractComponent, Ds extends AbstractComponent[] = []> = C extends (
+  Component<infer N, infer T>
+) ?
+  Provider<N, T, Mixed<Ds>>
+: never;
 
 export type ImplArgs<C extends AbstractComponent, Ds extends AbstractComponent[] = []> = _ImplArgs<
   Impl<C, Ds>
 >;
-type _ImplArgs<P extends AbstractProvider> = P extends Provider<infer N, infer T, infer D>
-  ? [name: N, factory: Factory<T, D>]
-  : never;
+type _ImplArgs<P extends AbstractProvider> =
+  P extends Provider<infer N, infer T, infer D> ? [name: N, factory: Factory<T, D>] : never;
 
 /**
  * Creates an implementation of a component.
