@@ -1,6 +1,4 @@
-"use strict";
-
-module.exports = {
+export default {
   parser: "typescript",
   printWidth: 100,
   tabWidth: 2,
