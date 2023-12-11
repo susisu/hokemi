@@ -1,6 +1,5 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, assertType, expect } from "vitest";
 import type { Equals } from "./__tests__/types";
-import { assertType } from "./__tests__/types";
 import type { Component } from "./component";
 import type {
   Factory,
@@ -19,7 +18,7 @@ describe("invokeFactory", () => {
     type Foo = { getFoo: () => number };
     const factory = (foo: number): Foo => ({ getFoo: () => foo });
     const value = invokeFactory(factory, 42);
-    assertType<Equals<typeof value, Foo>>();
+    assertType<Equals<typeof value, Foo>>(true);
     expect(value.getFoo()).toBe(42);
   });
 
@@ -36,7 +35,7 @@ describe("invokeFactory", () => {
       }
     };
     const value = invokeFactory(factory, 42);
-    assertType<Equals<typeof value, InstanceType<typeof factory>>>();
+    assertType<Equals<typeof value, InstanceType<typeof factory>>>(true);
     expect(value.getFoo()).toBe(42);
   });
 });
@@ -44,11 +43,11 @@ describe("invokeFactory", () => {
 describe("ProviderName", () => {
   it("returns the name of the provider", () => {
     type FooProvider = Provider<"foo", { getFoo: () => number }, { bar: { getBar: () => string } }>;
-    assertType<Equals<ProviderName<FooProvider>, "foo">>();
+    assertType<Equals<ProviderName<FooProvider>, "foo">>(true);
   });
 
   it("distributes over union members", () => {
-    assertType<Equals<ProviderName<never>, never>>();
+    assertType<Equals<ProviderName<never>, never>>(true);
 
     type FooProvider = Provider<"foo", { getFoo: () => number }, { bar: { getBar: () => string } }>;
     type BarProvider = Provider<
@@ -56,18 +55,18 @@ describe("ProviderName", () => {
       { getBar: () => string },
       { baz: { getBaz: () => boolean } }
     >;
-    assertType<Equals<ProviderName<FooProvider | BarProvider>, "foo" | "bar">>();
+    assertType<Equals<ProviderName<FooProvider | BarProvider>, "foo" | "bar">>(true);
   });
 });
 
 describe("ProviderDependencies", () => {
   it("returns the dependencies of the provider", () => {
     type FooProvider = Provider<"foo", { getFoo: () => number }, { bar: { getBar: () => string } }>;
-    assertType<Equals<ProviderDependencies<FooProvider>, { bar: { getBar: () => string } }>>();
+    assertType<Equals<ProviderDependencies<FooProvider>, { bar: { getBar: () => string } }>>(true);
   });
 
   it("returns the intersection of the dependencies of all the union members", () => {
-    assertType<Equals<ProviderDependencies<never>, unknown>>();
+    assertType<Equals<ProviderDependencies<never>, unknown>>(true);
 
     type FooProvider = Provider<"foo", { getFoo: () => number }, { bar: { getBar: () => string } }>;
     type BarProvider = Provider<
@@ -80,7 +79,7 @@ describe("ProviderDependencies", () => {
         ProviderDependencies<FooProvider | BarProvider>,
         { bar: { getBar: () => string } } & { baz: { getBaz: () => boolean } }
       >
-    >();
+    >(true);
   });
 });
 
@@ -89,11 +88,11 @@ describe("ReconstructComponent", () => {
     type FooProvider = Provider<"foo", { getFoo: () => number }, { bar: { getBar: () => string } }>;
     assertType<
       Equals<ReconstructComponent<FooProvider>, Component<"foo", { getFoo: () => number }>>
-    >();
+    >(true);
   });
 
   it("distributes over union members", () => {
-    assertType<Equals<ReconstructComponent<never>, never>>();
+    assertType<Equals<ReconstructComponent<never>, never>>(true);
 
     type FooProvider = Provider<"foo", { getFoo: () => number }, { bar: { getBar: () => string } }>;
     type BarProvider = Provider<"bar", { getBar: () => string }, {}>;
@@ -102,13 +101,13 @@ describe("ReconstructComponent", () => {
         ReconstructComponent<FooProvider | BarProvider>,
         Component<"foo", { getFoo: () => number }> | Component<"bar", { getBar: () => string }>
       >
-    >();
+    >(true);
   });
 });
 
 describe("MixedProvidedInstance", () => {
   it("returns a mixed instance type of the providers", () => {
-    assertType<Equals<MixedProvidedInstance<[]>, {}>>();
+    assertType<Equals<MixedProvidedInstance<[]>, {}>>(true);
 
     type FooProvider = Provider<"foo", { getFoo: () => number }, { bar: { getBar: () => string } }>;
     type BarProvider = Provider<"bar", { getBar: () => string }, {}>;
@@ -122,7 +121,7 @@ describe("MixedProvidedInstance", () => {
           baz: { getBaz: () => boolean };
         }>
       >
-    >();
+    >(true);
 
     type Bar2Provider = Provider<"bar", { getBar2: () => string }, {}>;
     assertType<
@@ -134,7 +133,7 @@ describe("MixedProvidedInstance", () => {
           baz: { getBaz: () => boolean };
         }>
       >
-    >();
+    >(true);
   });
 
   it("distibutes over union members", () => {
@@ -152,7 +151,7 @@ describe("MixedProvidedInstance", () => {
             baz: { getBaz: () => boolean };
           }>
       >
-    >();
+    >(true);
   });
 });
 
@@ -173,11 +172,11 @@ describe("Impl", () => {
           }>
         >
       >
-    >();
+    >(true);
   });
 
   it("distributes over union members", () => {
-    assertType<Equals<Impl<never, [BazComponent]>, never>>();
+    assertType<Equals<Impl<never, [BazComponent]>, never>>(true);
 
     type FooComponent = Component<"foo", { getFoo: () => number }>;
     type BarComponent = Component<"bar", { getBar: () => string }>;
@@ -188,7 +187,7 @@ describe("Impl", () => {
         | Provider<"foo", { getFoo: () => number }, Readonly<{ baz: { getBaz: () => boolean } }>>
         | Provider<"bar", { getBar: () => string }, Readonly<{ baz: { getBaz: () => boolean } }>>
       >
-    >();
+    >(true);
   });
 });
 
@@ -211,11 +210,11 @@ describe("ImplArgs", () => {
           >,
         ]
       >
-    >();
+    >(true);
   });
 
   it("distributes over union members", () => {
-    assertType<Equals<ImplArgs<never, [BazComponent]>, never>>();
+    assertType<Equals<ImplArgs<never, [BazComponent]>, never>>(true);
 
     type FooComponent = Component<"foo", { getFoo: () => number }>;
     type BarComponent = Component<"bar", { getBar: () => string }>;
@@ -226,7 +225,7 @@ describe("ImplArgs", () => {
         | ["foo", Factory<{ getFoo: () => number }, Readonly<{ baz: { getBaz: () => boolean } }>>]
         | ["bar", Factory<{ getBar: () => string }, Readonly<{ baz: { getBaz: () => boolean } }>>]
       >
-    >();
+    >(true);
   });
 });
 
@@ -238,7 +237,7 @@ describe("impl", () => {
     const foo = impl<FooComponent, [BarComponent]>("foo", ({ bar }) => ({
       getFoo: () => bar.getBar().length,
     }));
-    assertType<Equals<typeof foo, Impl<FooComponent, [BarComponent]>>>();
+    assertType<Equals<typeof foo, Impl<FooComponent, [BarComponent]>>>(true);
     expect(foo.name).toBe("foo");
     const value = invokeFactory(foo.factory, {
       bar: {

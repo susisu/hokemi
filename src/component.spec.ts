@@ -1,17 +1,16 @@
-import { describe, it } from "vitest";
+import { describe, it, assertType } from "vitest";
 import type { Equals } from "./__tests__/types";
-import { assertType } from "./__tests__/types";
 import type { Component, Instance, Mixed } from "./component";
 
 describe("Instance", () => {
   it("returns an object type with a property whose name is the component name and whose type is the component type", () => {
     type FooComponent = Component<"foo", { getFoo: () => number }>;
-    assertType<Equals<Instance<FooComponent>, Readonly<{ foo: { getFoo: () => number } }>>>();
+    assertType<Equals<Instance<FooComponent>, Readonly<{ foo: { getFoo: () => number } }>>>(true);
   });
 
   it("returns the union type of object types if the component name is a union string", () => {
     type XxxComponent = Component<never, { getXxx: () => number }>;
-    assertType<Equals<Instance<XxxComponent>, never>>();
+    assertType<Equals<Instance<XxxComponent>, never>>(true);
 
     type FooComponent = Component<"foo1" | "foo2", { getFoo: () => number }>;
     assertType<
@@ -19,7 +18,7 @@ describe("Instance", () => {
         Instance<FooComponent>,
         Readonly<{ foo1: { getFoo: () => number } }> | Readonly<{ foo2: { getFoo: () => number } }>
       >
-    >();
+    >(true);
   });
 
   it("returns an object type with an optional index signature if the component name is not of a finite string type", () => {
@@ -29,7 +28,7 @@ describe("Instance", () => {
         Instance<XxxComponent>,
         Readonly<{ [key: string]: { getXxx: () => number } | undefined }>
       >
-    >();
+    >(true);
 
     type YyyComponent = Component<`x-${string}`, { getYyy: () => number }>;
     assertType<
@@ -37,11 +36,11 @@ describe("Instance", () => {
         Instance<YyyComponent>,
         Readonly<{ [key: `x-${string}`]: { getYyy: () => number } | undefined }>
       >
-    >();
+    >(true);
   });
 
   it("distributes over union members", () => {
-    assertType<Equals<Instance<never>, never>>();
+    assertType<Equals<Instance<never>, never>>(true);
 
     type FooComponent = Component<"foo", { getFoo: () => number }>;
     type BarComponent = Component<"bar", { getBar: () => string }>;
@@ -50,13 +49,13 @@ describe("Instance", () => {
         Instance<FooComponent | BarComponent>,
         Readonly<{ foo: { getFoo: () => number } }> | Readonly<{ bar: { getBar: () => string } }>
       >
-    >();
+    >(true);
   });
 });
 
 describe("Mixed", () => {
   it("returns a mixed instance type of the components", () => {
-    assertType<Equals<Mixed<[]>, {}>>();
+    assertType<Equals<Mixed<[]>, {}>>(true);
 
     type FooComponent = Component<"foo", { getFoo: () => number }>;
     type BarComponent = Component<"bar", { getBar: () => string }>;
@@ -70,7 +69,7 @@ describe("Mixed", () => {
           baz: { getBaz: () => boolean };
         }>
       >
-    >();
+    >(true);
   });
 
   it("overrides previously declared component instances", () => {
@@ -87,7 +86,7 @@ describe("Mixed", () => {
           baz: { getBaz: () => boolean };
         }>
       >
-    >();
+    >(true);
   });
 
   it("erases all matching component instances before a component with an infinite name", () => {
@@ -105,15 +104,15 @@ describe("Mixed", () => {
           qux: { getQux: () => bigint };
         }>
       >
-    >();
+    >(true);
   });
 
   it("returns an empty object type if the input is not a tuple", () => {
     type FooComponent = Component<"foo", { getFoo: () => number }>;
     type BarComponent = Component<"bar", { getBar: () => string }>;
-    assertType<Equals<Mixed<FooComponent[]>, {}>>();
-    assertType<Equals<Mixed<[...FooComponent[], BarComponent]>, {}>>();
-    assertType<Equals<Mixed<[FooComponent, ...BarComponent[]]>, {}>>();
+    assertType<Equals<Mixed<FooComponent[]>, {}>>(true);
+    assertType<Equals<Mixed<[...FooComponent[], BarComponent]>, {}>>(true);
+    assertType<Equals<Mixed<[FooComponent, ...BarComponent[]]>, {}>>(true);
   });
 
   it("distibutes over union members", () => {
@@ -131,6 +130,6 @@ describe("Mixed", () => {
             baz: { getBaz: () => boolean };
           }>
       >
-    >();
+    >(true);
   });
 });

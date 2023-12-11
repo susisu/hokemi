@@ -1,6 +1,5 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, assertType, expect } from "vitest";
 import type { Equals } from "./__tests__/types";
-import { assertType } from "./__tests__/types";
 import type { Component, Mixed } from "./component";
 import type { Mixer } from "./mixer";
 import { mixer } from "./mixer";
@@ -25,7 +24,7 @@ describe("Mixer", () => {
       type BazImpl = Impl<BazComponent>;
 
       type M = Mixer<[FooImpl, BarImpl, BazImpl]>;
-      assertType<Equals<M["new"], () => Mixed<[FooComponent, BarComponent, BazComponent]>>>();
+      assertType<Equals<M["new"], () => Mixed<[FooComponent, BarComponent, BazComponent]>>>(true);
     });
 
     it("reports missing dependencies if some dependencies are missing", () => {
@@ -61,7 +60,7 @@ describe("Mixer", () => {
               };
             }
         >
-      >();
+      >(true);
     });
 
     it("reports incompatible dependencies if some dependencies are incompatible", () => {
@@ -91,7 +90,7 @@ describe("Mixer", () => {
             };
           }
         >
-      >();
+      >(true);
     });
 
     it("reports missing dependencies if some dependencies are possibly missing", () => {
@@ -116,12 +115,12 @@ describe("Mixer", () => {
             };
           }
         >
-      >();
+      >(true);
 
       type M2 = Mixer<[FooImpl, BarBazImpl, BarImpl]>;
       assertType<
         Equals<M2["new"], () => Mixed<[FooComponent, BarComponent | BazComponent, BarComponent]>>
-      >();
+      >(true);
     });
 
     it("allows creating an instance if any possible combination of dependencies is provided", () => {
@@ -153,13 +152,13 @@ describe("Mixer", () => {
             };
           }
         >
-      >();
+      >(true);
 
       type M2 = Mixer<[FooImpl, BarImpl]>;
-      assertType<Equals<M2["new"], () => Mixed<[FooComponent, BarComponent]>>>();
+      assertType<Equals<M2["new"], () => Mixed<[FooComponent, BarComponent]>>>(true);
 
       type M3 = Mixer<[FooImpl, BazImpl]>;
-      assertType<Equals<M3["new"], () => Mixed<[FooComponent, BazComponent]>>>();
+      assertType<Equals<M3["new"], () => Mixed<[FooComponent, BazComponent]>>>(true);
     });
 
     it("reports missing dependencies unless all possible dependencies are provided", () => {
@@ -188,7 +187,7 @@ describe("Mixer", () => {
             };
           }
         >
-      >();
+      >(true);
 
       type M2 = Mixer<[FooImpl, BarImpl]>;
       assertType<
@@ -207,7 +206,7 @@ describe("Mixer", () => {
             };
           }
         >
-      >();
+      >(true);
 
       type M3 = Mixer<[FooImpl, BazImpl]>;
       assertType<
@@ -226,10 +225,10 @@ describe("Mixer", () => {
             };
           }
         >
-      >();
+      >(true);
 
       type M4 = Mixer<[FooImpl, BarImpl, BazImpl]>;
-      assertType<Equals<M4["new"], () => Mixed<[FooComponent, BarComponent, BazComponent]>>>();
+      assertType<Equals<M4["new"], () => Mixed<[FooComponent, BarComponent, BazComponent]>>>(true);
     });
 
     /* eslint-enable @typescript-eslint/naming-convention */
@@ -257,10 +256,10 @@ describe("mixer", () => {
     }));
 
     const m = mixer(foo, bar, baz);
-    assertType<Equals<typeof m, Mixer<[typeof foo, typeof bar, typeof baz]>>>();
+    assertType<Equals<typeof m, Mixer<[typeof foo, typeof bar, typeof baz]>>>(true);
 
     const mixed = m.new();
-    assertType<Equals<typeof mixed, Mixed<[FooComponent, BarComponent, BazComponent]>>>();
+    assertType<Equals<typeof mixed, Mixed<[FooComponent, BarComponent, BazComponent]>>>(true);
     expect(mixed.foo.getFoo()).toBe(5);
   });
 
@@ -279,10 +278,10 @@ describe("mixer", () => {
     }));
 
     const m = mixer(foo, bar, baz).with(baz2);
-    assertType<Equals<typeof m, Mixer<[typeof foo, typeof bar, typeof baz, typeof baz2]>>>();
+    assertType<Equals<typeof m, Mixer<[typeof foo, typeof bar, typeof baz, typeof baz2]>>>(true);
 
     const mixed = m.new();
-    assertType<Equals<typeof mixed, Mixed<[FooComponent, BarComponent, BazComponent]>>>();
+    assertType<Equals<typeof mixed, Mixed<[FooComponent, BarComponent, BazComponent]>>>(true);
     expect(mixed.foo.getFoo()).toBe(42);
   });
 
@@ -356,10 +355,10 @@ describe("mixer", () => {
     );
 
     const m = mixer(foo, bar, baz);
-    assertType<Equals<typeof m, Mixer<[typeof foo, typeof bar, typeof baz]>>>();
+    assertType<Equals<typeof m, Mixer<[typeof foo, typeof bar, typeof baz]>>>(true);
 
     const mixed = m.new();
-    assertType<Equals<typeof mixed, Mixed<[FooComponent, BarComponent, BazComponent]>>>();
+    assertType<Equals<typeof mixed, Mixed<[FooComponent, BarComponent, BazComponent]>>>(true);
     expect(mixed.foo.getFoo()).toBe(5);
   });
 });
