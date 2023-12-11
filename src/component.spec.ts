@@ -1,3 +1,4 @@
+import { describe, it } from "vitest";
 import type { Equals } from "./__tests__/types";
 import { assertType } from "./__tests__/types";
 import type { Component, Instance, Mixed } from "./component";

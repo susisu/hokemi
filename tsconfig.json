@@ -13,7 +13,8 @@
     "noImplicitOverride": true,
     "sourceMap": true,
     "declaration": true,
-    "declarationMap": true
+    "declarationMap": true,
+    "skipLibCheck": true
   },
   "include": [
     "src/**/*"

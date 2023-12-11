@@ -17,26 +17,25 @@
     "format:check": "prettier --check '*.js' src",
     "lint": "eslint --fix '*.js' src",
     "lint:check": "eslint '*.js' src",
-    "test": "jest",
     "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run --coverage",
+    "test:dev": "vitest dev --coverage.enabled --coverage.reporter=text",
     "build": "tsc --build tsconfig.build.json",
     "clean": "run-s clean:build clean:rm",
     "clean:build": "tsc --build tsconfig.build.json --clean",
     "clean:rm": "rimraf lib",
-    "prepublishOnly": "run-s clean format:check lint:check test build"
+    "prepublishOnly": "run-s clean format:check lint:check typecheck test build"
   },
   "devDependencies": {
     "@susisu/eslint-config": "^0.0.72",
-    "@types/jest": "^29.5.11",
+    "@vitest/coverage-v8": "^1.0.4",
     "eslint": "^8.55.0",
     "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-jest": "^27.6.0",
-    "eslint-plugin-jest-formatting": "^3.1.0",
-    "jest": "^29.7.0",
+    "eslint-plugin-vitest": "^0.3.15",
     "npm-run-all": "^4.1.5",
     "prettier": "^3.1.1",
     "rimraf": "^5.0.5",
-    "ts-jest": "^29.1.1",
-    "typescript": "~5.3.3"
+    "typescript": "~5.3.3",
+    "vitest": "^1.0.4"
   }
 }
