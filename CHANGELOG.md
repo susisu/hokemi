@@ -1,3 +1,8 @@
+## 0.2.0 (2023-12-12)
+
+- The package is now ESM/CJS dual
+- Drop support for Node.js 16
+
 ## 0.1.3 (2023-08-17)
 
 - nit: Update documentation
