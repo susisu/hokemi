@@ -23,33 +23,32 @@ export type AbstractComponent = Component<string, unknown>;
  */
 export type Instance<C extends AbstractComponent> =
   C extends Component<infer N, infer T> ? _Instance<N, T> : never;
-type _Instance<N extends string, T extends unknown> = N extends unknown ?
-  IsFiniteString<N> extends true ?
-    { readonly [N0 in N]: T }
-  : { readonly [N0 in N]?: T }
-: never;
+type _Instance<N extends string, T extends unknown> =
+  N extends unknown ?
+    IsFiniteString<N> extends true ?
+      { readonly [N0 in N]: T }
+    : { readonly [N0 in N]?: T }
+  : never;
 
 /**
  * Returns the mixed instance type of components.
  * @param Cs Components.
  */
 export type Mixed<Cs extends AbstractComponent[]> = Merge<Prod<FilteredInstances<Cs, [], never>>>;
-type FilteredInstances<
-  Cs extends AbstractComponent[],
-  Is extends Array<{}>,
-  K extends string,
-> = Cs extends [] ? Is
-: Cs extends [...infer Xs extends AbstractComponent[], infer X extends AbstractComponent] ?
-  _FilteredInstances<Xs, Is, Instance<X>, K>
-: [];
+type FilteredInstances<Cs extends AbstractComponent[], Is extends Array<{}>, K extends string> =
+  Cs extends [] ? Is
+  : Cs extends [...infer Xs extends AbstractComponent[], infer X extends AbstractComponent] ?
+    _FilteredInstances<Xs, Is, Instance<X>, K>
+  : [];
 type _FilteredInstances<
   Cs extends AbstractComponent[],
   Is extends Array<{}>,
   I extends {},
   K extends string,
-> = I extends unknown ?
-  keyof I extends K ? FilteredInstances<Cs, Is, K>
-  : IsFiniteString<AsString<keyof I>> extends true ?
-    FilteredInstances<Cs, [I, ...Is], K | AsString<keyof I>>
-  : FilteredInstances<Cs, Is, K | AsString<keyof I>>
-: never;
+> =
+  I extends unknown ?
+    keyof I extends K ? FilteredInstances<Cs, Is, K>
+    : IsFiniteString<AsString<keyof I>> extends true ?
+      FilteredInstances<Cs, [I, ...Is], K | AsString<keyof I>>
+    : FilteredInstances<Cs, Is, K | AsString<keyof I>>
+  : never;

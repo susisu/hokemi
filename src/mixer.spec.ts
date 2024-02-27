@@ -305,7 +305,7 @@ describe("mixer", () => {
     const foo = impl<FooComponent, [BarComponent]>("foo", ({ bar }) => ({
       getFoo: () => bar.getBar().length,
     }));
-    const bar = impl<BarComponent, [FooComponent]>("bar", deps => ({
+    const bar = impl<BarComponent, [FooComponent]>("bar", (deps) => ({
       getBar: () => deps.foo.getFoo().toString(),
     }));
 
@@ -329,7 +329,7 @@ describe("mixer", () => {
         getFoo(): number {
           return this.baz.getBaz() ? this.bar.getBar().length : 42;
         }
-      }
+      },
     );
     const bar = impl<BarComponent, [BazComponent]>(
       "bar",
@@ -343,7 +343,7 @@ describe("mixer", () => {
         getBar(): string {
           return this.baz.getBaz() ? "Hello" : "Bye";
         }
-      }
+      },
     );
     const baz = impl<BazComponent>(
       "baz",
@@ -351,7 +351,7 @@ describe("mixer", () => {
         getBaz(): boolean {
           return true;
         }
-      }
+      },
     );
 
     const m = mixer(foo, bar, baz);

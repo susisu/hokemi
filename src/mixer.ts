@@ -36,79 +36,75 @@ type MixerError<Ps extends AbstractProvider[]> = {
   [K in keyof Ps]: PerProviderError<Ps[K], Ps>;
 }[number];
 
-type PerProviderError<
-  P extends AbstractProvider,
-  Ps extends AbstractProvider[],
-> = MixedProvidedInstance<Ps> extends ProviderDependencies<P> ? never
-: OrElse<
-    MissingDependenciesError<P, Ps> | IncompatibleDependenciesError<P, Ps>,
-    UnknownError<{
-      reason: "unknown dependency error (this is likely a bug; please file an issue)";
-      providerName: ProviderName<P>;
-    }>
-  >;
+type PerProviderError<P extends AbstractProvider, Ps extends AbstractProvider[]> =
+  MixedProvidedInstance<Ps> extends ProviderDependencies<P> ? never
+  : OrElse<
+      MissingDependenciesError<P, Ps> | IncompatibleDependenciesError<P, Ps>,
+      UnknownError<{
+        reason: "unknown dependency error (this is likely a bug; please file an issue)";
+        providerName: ProviderName<P>;
+      }>
+    >;
 
 type UnknownError<E extends unknown> = {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   __unknownError?: E;
 };
 
-type MissingDependenciesError<
-  P extends AbstractProvider,
-  Ps extends AbstractProvider[],
-> = MissingDependencies<P, Ps> extends never ? never
-: {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    __missingDependenciesError?: {
-      reason: "some dependencies are missing";
-      providerName: ProviderName<P>;
-      dependencies: MissingDependencies<P, Ps>;
+type MissingDependenciesError<P extends AbstractProvider, Ps extends AbstractProvider[]> =
+  MissingDependencies<P, Ps> extends never ? never
+  : {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      __missingDependenciesError?: {
+        reason: "some dependencies are missing";
+        providerName: ProviderName<P>;
+        dependencies: MissingDependencies<P, Ps>;
+      };
     };
-  };
 type MissingDependencies<
   P extends AbstractProvider,
   Ps extends AbstractProvider[],
 > = _MissingDependencies<ProviderDependencies<P>, MixedProvidedInstance<Ps>>;
-type _MissingDependencies<D extends unknown, I extends unknown> = D extends unknown ?
-  Wrap<
-    {
-      [N in keyof D]: N extends keyof I ? never
-      : {
-          name: N;
-          expectedType: D[N];
-        };
-    }[keyof D]
-  >
-: never;
+type _MissingDependencies<D extends unknown, I extends unknown> =
+  D extends unknown ?
+    Wrap<
+      {
+        [N in keyof D]: N extends keyof I ? never
+        : {
+            name: N;
+            expectedType: D[N];
+          };
+      }[keyof D]
+    >
+  : never;
 
-type IncompatibleDependenciesError<
-  P extends AbstractProvider,
-  Ps extends AbstractProvider[],
-> = IncompatibleDependencies<P, Ps> extends never ? never
-: {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    __incompatibleDependenciesError?: {
-      reason: "some dependencies are incompatible";
-      providerName: ProviderName<P>;
-      dependencies: IncompatibleDependencies<P, Ps>;
+type IncompatibleDependenciesError<P extends AbstractProvider, Ps extends AbstractProvider[]> =
+  IncompatibleDependencies<P, Ps> extends never ? never
+  : {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      __incompatibleDependenciesError?: {
+        reason: "some dependencies are incompatible";
+        providerName: ProviderName<P>;
+        dependencies: IncompatibleDependencies<P, Ps>;
+      };
     };
-  };
 type IncompatibleDependencies<
   P extends AbstractProvider,
   Ps extends AbstractProvider[],
 > = _IncompatibleDependencies<ProviderDependencies<P>, MixedProvidedInstance<Ps>>;
-type _IncompatibleDependencies<D extends unknown, I extends unknown> = D extends unknown ?
-  Wrap<
-    {
-      [N in keyof D & keyof I]: I[N] extends D[N] ? never
-      : {
-          name: N;
-          expectedType: D[N];
-          actualType: I[N];
-        };
-    }[keyof D & keyof I]
-  >
-: never;
+type _IncompatibleDependencies<D extends unknown, I extends unknown> =
+  D extends unknown ?
+    Wrap<
+      {
+        [N in keyof D & keyof I]: I[N] extends D[N] ? never
+        : {
+            name: N;
+            expectedType: D[N];
+            actualType: I[N];
+          };
+      }[keyof D & keyof I]
+    >
+  : never;
 
 /**
  * Creates a new mixer object.

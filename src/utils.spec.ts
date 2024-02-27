@@ -35,7 +35,7 @@ describe("Prod", () => {
   it("returns the product type of the given tuple type", () => {
     assertType<Equals<Prod<[]>, unknown>>(true);
     assertType<Equals<Prod<[{ foo: "foo" }, { bar: "bar" }]>, { foo: "foo" } & { bar: "bar" }>>(
-      true
+      true,
     );
     assertType<
       Equals<

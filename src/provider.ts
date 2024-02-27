@@ -21,7 +21,7 @@ export type FactoryClass<T extends unknown, D extends unknown> = new (deps: D) =
 
 export function invokeFactory<T extends unknown, D extends unknown>(
   factory: Factory<T, D>,
-  deps: D
+  deps: D,
 ): T {
   // check if the factory is a class (not a perfect check though)
   const desc = Object.getOwnPropertyDescriptor(factory, "prototype");
@@ -61,11 +61,8 @@ export type MixedProvidedInstance<Ps extends AbstractProvider[]> = Mixed<{
  * @param C A component.
  * @param Ds A list of dependencies.
  */
-export type Impl<C extends AbstractComponent, Ds extends AbstractComponent[] = []> = C extends (
-  Component<infer N, infer T>
-) ?
-  Provider<N, T, Mixed<Ds>>
-: never;
+export type Impl<C extends AbstractComponent, Ds extends AbstractComponent[] = []> =
+  C extends Component<infer N, infer T> ? Provider<N, T, Mixed<Ds>> : never;
 
 export type ImplArgs<C extends AbstractComponent, Ds extends AbstractComponent[] = []> = _ImplArgs<
   Impl<C, Ds>
