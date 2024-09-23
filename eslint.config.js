@@ -7,8 +7,7 @@ export default config({}, [
     files: ["src/**/*.ts"],
     languageOptions: {
       globals: {
-        ...globals.es2021,
-        ...globals.node,
+        ...globals.es2023,
       },
     },
   },
@@ -26,7 +25,7 @@ export default config({}, [
     files: ["*.js"],
     languageOptions: {
       globals: {
-        ...globals.es2021,
+        ...globals.es2023,
         ...globals.node,
       },
     },
