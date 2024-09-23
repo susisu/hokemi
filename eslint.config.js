@@ -2,7 +2,7 @@ import { config } from "@susisu/eslint-config";
 import vitestPlugin from "@vitest/eslint-plugin";
 import globals from "globals";
 
-export default config({}, [
+export default config({ tsconfigRootDir: import.meta.dirname }, [
   {
     files: ["src/**/*.ts"],
     languageOptions: {
