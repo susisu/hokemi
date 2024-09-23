@@ -40,9 +40,9 @@
   "devDependencies": {
     "@susisu/eslint-config": "^0.0.90",
     "@vitest/coverage-v8": "^2.1.1",
+    "@vitest/eslint-plugin": "^1.1.4",
     "eslint": "^9.11.0",
     "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-vitest": "^0.5.4",
     "globals": "^15.9.0",
     "npm-run-all2": "^6.2.3",
     "prettier": "^3.3.3",

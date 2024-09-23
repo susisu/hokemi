@@ -1,13 +1,8 @@
 import { config } from "@susisu/eslint-config";
-import vitestPlugin from "eslint-plugin-vitest";
+import vitestPlugin from "@vitest/eslint-plugin";
 import globals from "globals";
 
 export default config({}, [
-  {
-    plugins: {
-      vitest: vitestPlugin,
-    },
-  },
   {
     files: ["src/**/*.ts"],
     languageOptions: {
@@ -19,6 +14,9 @@ export default config({}, [
   },
   {
     files: ["src/**/*.spec.ts", "src/**/__tests__/**/*.ts"],
+    plugins: {
+      vitest: vitestPlugin,
+    },
     rules: {
       ...vitestPlugin.configs.recommended.rules,
       "vitest/expect-expect": ["error", { assertFunctionNames: ["expect", "assertType"] }],
