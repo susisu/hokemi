@@ -1,3 +1,7 @@
+## 0.3.0 (2025-02-09)
+
+- Remove CommonJS builds
+
 ## 0.2.1 (2024-09-23)
 
 - Fix ordering in the `exports` field in `package.json`
