@@ -57,7 +57,7 @@ export const myServiceImpl = impl<MyServiceComponent, [ClockComponent, RandomCom
   "myService",
   ({ clock, random }) => ({
     getTimeAndRandom: () => [clock.getTime(), random.getRandom()],
-  })
+  }),
 );
 ```
 

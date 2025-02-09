@@ -1,5 +1,7 @@
-import type { Component } from "@susisu/hokemi";
-import { impl, mixer } from "@susisu/hokemi";
+// import type { Component } from "@susisu/hokemi";
+// import { impl, mixer } from "@susisu/hokemi";
+import type { Component } from "../src/index.js";
+import { impl, mixer } from "../src/index.js";
 
 // 1. Declare components
 
@@ -32,7 +34,7 @@ export const myServiceImpl = impl<MyServiceComponent, [ClockComponent, RandomCom
   "myService",
   ({ clock, random }) => ({
     getTimeAndRandom: () => [clock.getTime(), random.getRandom()],
-  })
+  }),
 );
 
 // 3. Mix implementations and create an instance

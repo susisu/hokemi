@@ -22,6 +22,15 @@ export default config({ tsconfigRootDir: import.meta.dirname }, [
     },
   },
   {
+    files: ["examples/**/*.ts"],
+    languageOptions: {
+      globals: {
+        ...globals.es2023,
+        ...globals.node,
+      },
+    },
+  },
+  {
     files: ["*.js"],
     languageOptions: {
       globals: {
