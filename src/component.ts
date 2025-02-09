@@ -1,4 +1,4 @@
-import type { AsString, IsFiniteString, Merge, Prod } from "./utils";
+import type { AsString, IsFiniteString, Merge, Prod } from "./utils.js";
 
 /**
  * `Component<N, T>` represents a component.

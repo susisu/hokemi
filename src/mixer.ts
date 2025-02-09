@@ -3,9 +3,9 @@ import type {
   ProviderDependencies,
   ProviderName,
   MixedProvidedInstance,
-} from "./provider";
-import { invokeFactory } from "./provider";
-import type { OrElse, Wrap } from "./utils";
+} from "./provider.js";
+import { invokeFactory } from "./provider.js";
+import type { OrElse, Wrap } from "./utils.js";
 
 /**
  * `Mixer<Ps>` represents a mixer object.

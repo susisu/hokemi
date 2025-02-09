@@ -1,6 +1,6 @@
 import { describe, it, assertType } from "vitest";
-import type { Equals } from "./__tests__/types";
-import type { Component, Instance, Mixed } from "./component";
+import type { Equals } from "./__tests__/types.js";
+import type { Component, Instance, Mixed } from "./component.js";
 
 describe("Instance", () => {
   it("returns an object type with a property whose name is the component name and whose type is the component type", () => {

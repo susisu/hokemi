@@ -1,6 +1,6 @@
 import { describe, it, assertType, expect } from "vitest";
-import type { Equals } from "./__tests__/types";
-import type { Component } from "./component";
+import type { Equals } from "./__tests__/types.js";
+import type { Component } from "./component.js";
 import type {
   Factory,
   Impl,
@@ -10,8 +10,8 @@ import type {
   ProviderDependencies,
   ProviderName,
   ReconstructComponent,
-} from "./provider";
-import { invokeFactory, impl } from "./provider";
+} from "./provider.js";
+import { invokeFactory, impl } from "./provider.js";
 
 describe("invokeFactory", () => {
   it("calls the argument if it is a function", () => {

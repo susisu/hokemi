@@ -1,6 +1,6 @@
 import { describe, it, assertType } from "vitest";
-import type { Equals } from "./__tests__/types";
-import type { AsString, IsFiniteString, Merge, OrElse, Prod, Wrap } from "./utils";
+import type { Equals } from "./__tests__/types.js";
+import type { AsString, IsFiniteString, Merge, OrElse, Prod, Wrap } from "./utils.js";
 
 describe("IsFiniteString", () => {
   it("returns true if and only if the type has a finite number of inhabitants", () => {

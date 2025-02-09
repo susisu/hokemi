@@ -1,5 +1,5 @@
-export type { Component, AbstractComponent, Instance, Mixed } from "./component";
-export type { Provider, AbstractProvider, Impl } from "./provider";
-export { impl } from "./provider";
-export type { Mixer } from "./mixer";
-export { mixer } from "./mixer";
+export type { Component, AbstractComponent, Instance, Mixed } from "./component.js";
+export type { Provider, AbstractProvider, Impl } from "./provider.js";
+export { impl } from "./provider.js";
+export type { Mixer } from "./mixer.js";
+export { mixer } from "./mixer.js";

@@ -1,10 +1,10 @@
 import { describe, it, assertType, expect } from "vitest";
-import type { Equals } from "./__tests__/types";
-import type { Component, Mixed } from "./component";
-import type { Mixer } from "./mixer";
-import { mixer } from "./mixer";
-import type { Impl } from "./provider";
-import { impl } from "./provider";
+import type { Equals } from "./__tests__/types.js";
+import type { Component, Mixed } from "./component.js";
+import type { Mixer } from "./mixer.js";
+import { mixer } from "./mixer.js";
+import type { Impl } from "./provider.js";
+import { impl } from "./provider.js";
 
 describe("Mixer", () => {
   describe("new", () => {

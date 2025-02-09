@@ -1,4 +1,4 @@
-import type { AbstractComponent, Component, Mixed } from "./component";
+import type { AbstractComponent, Component, Mixed } from "./component.js";
 
 /**
  * `Provider<N, T, D>` represents a component provider.
