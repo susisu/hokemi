@@ -1,3 +1,5 @@
-export { Component, AbstractComponent, Instance, Mixed } from "./component";
-export { Provider, AbstractProvider, Impl, impl } from "./provider";
-export { Mixer, mixer } from "./mixer";
+export type { Component, AbstractComponent, Instance, Mixed } from "./component";
+export type { Provider, AbstractProvider, Impl } from "./provider";
+export { impl } from "./provider";
+export type { Mixer } from "./mixer";
+export { mixer } from "./mixer";
