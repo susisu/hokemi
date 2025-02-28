@@ -10,7 +10,7 @@
   "files": [
     "lib",
     "src",
-    "!src/**/*.spec.ts",
+    "!src/**/*.{test,spec}.{ts,tsx}",
     "!src/**/__tests__"
   ],
   "main": "lib/index.js",
